@@ -20,7 +20,7 @@ export function Hero() {
         <div className="space-y-8">
           <div className="space-y-4">
             <h1 className="font-serif text-5xl sm:text-6xl lg:text-7xl font-light text-foreground text-balance drop-shadow-lg">
-              Jack & Audrey
+              Jackson & Audrey
             </h1>
             <p className="text-xl sm:text-2xl text-muted-foreground font-light drop-shadow-md">
               {"Together with our families, we invite you to celebrate our love"}
