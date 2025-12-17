@@ -13,6 +13,7 @@ import type * as cocktails from "../cocktails.js";
 import type * as http from "../http.js";
 import type * as songs from "../songs.js";
 import type * as test from "../test.js";
+import type * as trivia from "../trivia.js";
 import type * as users from "../users.js";
 
 import type {
@@ -27,6 +28,7 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   songs: typeof songs;
   test: typeof test;
+  trivia: typeof trivia;
   users: typeof users;
 }>;
 

@@ -6,6 +6,7 @@ import { Playfair_Display } from "next/font/google"
 import { Suspense } from "react"
 import { Navigation } from "@/components/navigation"
 import { ConvexClientProvider } from "@/components/convex-provider"
+import { Toaster } from "@/components/ui/sonner"
 import "./globals.css"
 
 const playfair = Playfair_Display({
@@ -32,6 +33,7 @@ export default function RootLayout({
           <div className="pt-16">
             <Suspense fallback={null}>{children}</Suspense>
           </div>
+          <Toaster position="top-center" richColors />
         </ConvexClientProvider>
       </body>
     </html>

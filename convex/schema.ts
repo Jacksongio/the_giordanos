@@ -39,5 +39,15 @@ export default defineSchema({
   })
     .index("by_votes", ["votes"])
     .index("by_created_at", ["created_at"]),
+
+  triviaScores: defineTable({
+    user_id: v.id("users"),
+    score: v.number(),
+    total_questions: v.number(),
+    percentage: v.number(),
+    completed_at: v.number(),
+  })
+    .index("by_user", ["user_id"])
+    .index("by_percentage", ["percentage"]),
 })
 
