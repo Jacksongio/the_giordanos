@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 import { Search, Music, ThumbsUp, Plus } from "lucide-react"
 import { getSongs, addSong, upvoteSong, type Song } from "./actions"
+import { ProtectedPage } from "@/components/protected-page"
 
 interface SpotifyTrack {
   id: string
@@ -127,7 +128,8 @@ export default function SongSuggestionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted">
+    <ProtectedPage title="Song Suggestions">
+      <div className="min-h-screen bg-gradient-to-b from-background to-muted">
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
@@ -290,5 +292,6 @@ export default function SongSuggestionsPage() {
         </div>
       </div>
     </div>
+    </ProtectedPage>
   )
 }

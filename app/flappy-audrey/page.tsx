@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+import { ProtectedPage } from "@/components/protected-page"
 
 export default function FlappyAudreyPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -339,7 +340,8 @@ export default function FlappyAudreyPage() {
   }, [highScore])
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-300 to-sky-100 flex flex-col items-center justify-center p-4">
+    <ProtectedPage title="Flappy Audrey">
+      <div className="min-h-screen bg-gradient-to-b from-sky-300 to-sky-100 flex flex-col items-center justify-center p-4">
       <div className="text-center mb-6">
         <h1 className="font-serif text-4xl font-bold text-gray-800 mb-2">FlappyAudrey</h1>
         <p className="text-gray-600">A fun game for wedding guests!</p>
@@ -356,5 +358,6 @@ export default function FlappyAudreyPage() {
         <p className="text-sm text-gray-500 mt-2">Click or press Space to jump</p>
       </div>
     </div>
+    </ProtectedPage>
   )
 }

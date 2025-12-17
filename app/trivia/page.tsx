@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { CheckCircle2, XCircle, Trophy, RotateCcw } from "lucide-react"
+import { ProtectedPage } from "@/components/protected-page"
 
 interface Question {
   question: string
@@ -153,7 +154,8 @@ export default function TriviaPage() {
   const question = triviaQuestions[currentQuestion]
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted py-12 px-4">
+    <ProtectedPage title="Trivia">
+      <div className="min-h-screen bg-gradient-to-b from-background to-muted py-12 px-4">
       <div className="max-w-2xl mx-auto">
         <Card className="p-8">
           <div className="mb-6">
@@ -218,5 +220,6 @@ export default function TriviaPage() {
         </Card>
       </div>
     </div>
+    </ProtectedPage>
   )
 }

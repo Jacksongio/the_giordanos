@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { ThumbsUp, ThumbsDown, Plus, X } from "lucide-react"
 import { getCocktails, upvoteCocktail, downvoteCocktail, addCocktail, type Cocktail } from "./actions"
+import { ProtectedPage } from "@/components/protected-page"
 
 export default function CocktailsPage() {
   const [cocktails, setCocktails] = useState<Cocktail[]>([])
@@ -50,7 +51,8 @@ export default function CocktailsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <ProtectedPage title="Cocktail Suggestions">
+      <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="bg-primary/10 border-b border-border">
         <div className="max-w-4xl mx-auto px-4 py-8">
@@ -171,5 +173,6 @@ export default function CocktailsPage() {
         </div>
       </div>
     </div>
+    </ProtectedPage>
   )
 }

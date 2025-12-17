@@ -2,6 +2,8 @@
 
 import { useState } from "react"
 import { useAuthActions } from "@convex-dev/auth/react"
+import { useQuery } from "convex/react"
+import { api } from "../convex/_generated/api"
 import { Button } from "@/components/ui/button"
 import { LogIn, LogOut, User } from "lucide-react"
 import { AuthDialog } from "./auth-dialog"
@@ -13,8 +15,13 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 export function AuthButton() {
-  const { isLoading, isAuthenticated, user, signOut } = useAuthActions()
+  const { signOut } = useAuthActions()
+  const viewer = useQuery(api.users.getCurrentUser)
   const [authDialogOpen, setAuthDialogOpen] = useState(false)
+
+  const isLoading = viewer === undefined
+  const isAuthenticated = viewer !== null
+  const user = viewer || undefined
 
   if (isLoading) {
     return (
