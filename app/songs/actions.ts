@@ -10,8 +10,12 @@ export interface Song {
   artist_name: string
   spotify_id: string | null
   album_image: string | null
-  suggested_by: string
-  votes: number
+  suggested_by_user_id: string
+  suggested_by_name: string
+  upvotes: number
+  downvotes: number
+  upvoted_by: string[]
+  downvoted_by: string[]
   created_at: string
 }
 
@@ -27,8 +31,12 @@ export async function getSongs() {
       artist_name: song.artist_name,
       spotify_id: song.spotify_id ?? null,
       album_image: song.album_image ?? null,
-      suggested_by: song.suggested_by,
-      votes: song.votes,
+      suggested_by_user_id: song.suggested_by_user_id,
+      suggested_by_name: song.suggested_by_name,
+      upvotes: song.upvotes,
+      downvotes: song.downvotes,
+      upvoted_by: song.upvoted_by,
+      downvoted_by: song.downvoted_by,
       created_at: new Date(song.created_at).toISOString(),
     })) as Song[]
   } catch (error) {
@@ -42,7 +50,6 @@ export async function addSong(songData: {
   artist_name: string
   spotify_id?: string
   album_image?: string
-  suggested_by: string
 }) {
   try {
     const convex = getConvexClient()
@@ -51,7 +58,6 @@ export async function addSong(songData: {
       artist_name: songData.artist_name,
       spotify_id: songData.spotify_id,
       album_image: songData.album_image,
-      suggested_by: songData.suggested_by,
     })
 
     if (!song) {
@@ -66,8 +72,12 @@ export async function addSong(songData: {
       artist_name: song.artist_name,
       spotify_id: song.spotify_id ?? null,
       album_image: song.album_image ?? null,
-      suggested_by: song.suggested_by,
-      votes: song.votes,
+      suggested_by_user_id: song.suggested_by_user_id,
+      suggested_by_name: song.suggested_by_name,
+      upvotes: song.upvotes,
+      downvotes: song.downvotes,
+      upvoted_by: song.upvoted_by,
+      downvoted_by: song.downvoted_by,
       created_at: new Date(song.created_at).toISOString(),
     } as Song
   } catch (error) {
@@ -80,6 +90,19 @@ export async function upvoteSong(songId: string) {
   try {
     const convex = getConvexClient()
     await convex.mutation(api.songs.upvoteSong, {
+      songId: songId as Id<"songs">,
+    })
+    revalidatePath("/songs")
+  } catch (error) {
+    console.error("Error updating votes:", error)
+    throw new Error("Failed to update votes")
+  }
+}
+
+export async function downvoteSong(songId: string) {
+  try {
+    const convex = getConvexClient()
+    await convex.mutation(api.songs.downvoteSong, {
       songId: songId as Id<"songs">,
     })
     revalidatePath("/songs")
