@@ -90,9 +90,6 @@ export function Navigation() {
             <Link href="/songs" className="text-foreground hover:text-primary transition-colors">
               Song Suggestions
             </Link>
-            <Link href="/flappy-audrey" className="text-foreground hover:text-primary transition-colors">
-              FlappyAudrey
-            </Link>
             <Link href="/cocktails" className="text-foreground hover:text-primary transition-colors">
               Cocktail Suggestions
             </Link>
@@ -139,13 +136,6 @@ export function Navigation() {
                 onClick={() => setIsOpen(false)}
               >
                 Song Suggestions
-              </Link>
-              <Link
-                href="/flappy-audrey"
-                className="block px-3 py-2 text-foreground hover:text-primary transition-colors w-full text-left"
-                onClick={() => setIsOpen(false)}
-              >
-                FlappyAudrey
               </Link>
               <Link
                 href="/cocktails"
