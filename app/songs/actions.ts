@@ -1,7 +1,8 @@
 "use server"
 
-import { getSupabaseServerClient } from "@/lib/supabase/server"
+import { getConvexClient, api } from "@/lib/convex"
 import { revalidatePath } from "next/cache"
+import { Id } from "../convex/_generated/dataModel"
 
 export interface Song {
   id: string
@@ -15,20 +16,25 @@ export interface Song {
 }
 
 export async function getSongs() {
-  const supabase = await getSupabaseServerClient()
-
-  const { data, error } = await supabase
-    .from("songs")
-    .select("*")
-    .order("votes", { ascending: false })
-    .order("created_at", { ascending: false })
-
-  if (error) {
+  try {
+    const convex = getConvexClient()
+    const songs = await convex.query(api.songs.getSongs, {})
+    
+    // Convert Convex format to expected format
+    return songs.map((song) => ({
+      id: song._id,
+      song_name: song.song_name,
+      artist_name: song.artist_name,
+      spotify_id: song.spotify_id ?? null,
+      album_image: song.album_image ?? null,
+      suggested_by: song.suggested_by,
+      votes: song.votes,
+      created_at: new Date(song.created_at).toISOString(),
+    })) as Song[]
+  } catch (error) {
     console.error("Error fetching songs:", error)
     return []
   }
-
-  return data as Song[]
 }
 
 export async function addSong(songData: {
@@ -38,40 +44,47 @@ export async function addSong(songData: {
   album_image?: string
   suggested_by: string
 }) {
-  const supabase = await getSupabaseServerClient()
+  try {
+    const convex = getConvexClient()
+    const song = await convex.mutation(api.songs.addSong, {
+      song_name: songData.song_name,
+      artist_name: songData.artist_name,
+      spotify_id: songData.spotify_id,
+      album_image: songData.album_image,
+      suggested_by: songData.suggested_by,
+    })
 
-  const { data, error } = await supabase.from("songs").insert([songData]).select().single()
+    if (!song) {
+      throw new Error("Failed to add song")
+    }
 
-  if (error) {
+    revalidatePath("/songs")
+    
+    return {
+      id: song._id,
+      song_name: song.song_name,
+      artist_name: song.artist_name,
+      spotify_id: song.spotify_id ?? null,
+      album_image: song.album_image ?? null,
+      suggested_by: song.suggested_by,
+      votes: song.votes,
+      created_at: new Date(song.created_at).toISOString(),
+    } as Song
+  } catch (error) {
     console.error("Error adding song:", error)
     throw new Error("Failed to add song")
   }
-
-  revalidatePath("/songs")
-  return data as Song
 }
 
 export async function upvoteSong(songId: string) {
-  const supabase = await getSupabaseServerClient()
-
-  // Get current votes
-  const { data: song, error: fetchError } = await supabase.from("songs").select("votes").eq("id", songId).single()
-
-  if (fetchError) {
-    console.error("Error fetching song:", fetchError)
-    throw new Error("Failed to fetch song")
-  }
-
-  // Increment votes
-  const { error: updateError } = await supabase
-    .from("songs")
-    .update({ votes: song.votes + 1 })
-    .eq("id", songId)
-
-  if (updateError) {
-    console.error("Error updating votes:", updateError)
+  try {
+    const convex = getConvexClient()
+    await convex.mutation(api.songs.upvoteSong, {
+      songId: songId as Id<"songs">,
+    })
+    revalidatePath("/songs")
+  } catch (error) {
+    console.error("Error updating votes:", error)
     throw new Error("Failed to update votes")
   }
-
-  revalidatePath("/songs")
 }

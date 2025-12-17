@@ -5,6 +5,7 @@ import { GeistMono } from "geist/font/mono"
 import { Playfair_Display } from "next/font/google"
 import { Suspense } from "react"
 import { Navigation } from "@/components/navigation"
+import { ConvexClientProvider } from "@/components/convex-provider"
 import "./globals.css"
 
 const playfair = Playfair_Display({
@@ -26,10 +27,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`font-sans ${GeistSans.className} ${GeistMono.className} ${playfair.variable}`}>
-        <Navigation />
-        <div className="pt-16">
-          <Suspense fallback={null}>{children}</Suspense>
-        </div>
+        <ConvexClientProvider>
+          <Navigation />
+          <div className="pt-16">
+            <Suspense fallback={null}>{children}</Suspense>
+          </div>
+        </ConvexClientProvider>
       </body>
     </html>
   )
