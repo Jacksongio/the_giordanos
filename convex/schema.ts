@@ -34,11 +34,17 @@ export default defineSchema({
     description: v.optional(v.string()),
     ingredients: v.optional(v.string()),
     image_url: v.optional(v.string()),
-    votes: v.number(),
+    suggested_by_user_id: v.id("users"),
+    suggested_by_name: v.string(),
+    upvotes: v.number(),
+    downvotes: v.number(),
+    upvoted_by: v.array(v.id("users")),
+    downvoted_by: v.array(v.id("users")),
     created_at: v.number(),
   })
-    .index("by_votes", ["votes"])
-    .index("by_created_at", ["created_at"]),
+    .index("by_score", ["upvotes", "downvotes"])
+    .index("by_created_at", ["created_at"])
+    .index("by_user", ["suggested_by_user_id"]),
 
   triviaScores: defineTable({
     user_id: v.id("users"),

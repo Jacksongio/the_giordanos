@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { usePathname, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
 import Link from "next/link"
@@ -9,6 +10,8 @@ import { AuthButton } from "@/components/auth-button"
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const pathname = usePathname()
+  const router = useRouter()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,9 +22,35 @@ export function Navigation() {
   }, [])
 
   const scrollToSection = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" })
     setIsOpen(false)
+    
+    // If we're on the home page, scroll to the section
+    if (pathname === "/") {
+      // Small delay to ensure the menu closes first
+      setTimeout(() => {
+        const element = document.getElementById(id)
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" })
+        }
+      }, 100)
+    } else {
+      // If we're on a different page, navigate to home with hash
+      router.push(`/#${id}`)
+    }
   }
+
+  // Handle hash scrolling when page loads with a hash
+  useEffect(() => {
+    if (pathname === "/" && window.location.hash) {
+      const hash = window.location.hash.substring(1) // Remove the #
+      setTimeout(() => {
+        const element = document.getElementById(hash)
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" })
+        }
+      }, 100)
+    }
+  }, [pathname])
 
   return (
     <nav

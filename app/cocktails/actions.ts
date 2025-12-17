@@ -10,7 +10,11 @@ export interface Cocktail {
   description: string | null
   ingredients: string | null
   image_url: string | null
-  votes: number
+  suggested_by_user_id: string
+  suggested_by_name: string
+  upvotes: number
+  downvotes: number
+  score: number
   created_at: string
 }
 
@@ -26,7 +30,11 @@ export async function getCocktails(): Promise<Cocktail[]> {
       description: cocktail.description ?? null,
       ingredients: cocktail.ingredients ?? null,
       image_url: cocktail.image_url ?? null,
-      votes: cocktail.votes,
+      suggested_by_user_id: cocktail.suggested_by_user_id,
+      suggested_by_name: cocktail.suggested_by_name,
+      upvotes: cocktail.upvotes,
+      downvotes: cocktail.downvotes,
+      score: cocktail.upvotes - cocktail.downvotes,
       created_at: new Date(cocktail.created_at).toISOString(),
     })) as Cocktail[]
   } catch (error) {
