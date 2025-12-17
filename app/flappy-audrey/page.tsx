@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+import { ProtectedPage } from "@/components/protected-page"
 
 export default function FlappyAudreyPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -36,18 +37,21 @@ export default function FlappyAudreyPage() {
     const ctx = canvas.getContext("2d")
     if (!ctx) return
 
-    const GRAVITY = 0.05
-    const JUMP_STRENGTH = -2.5
+    // Convert to per-second values (assuming original values were for 60 FPS)
+    const GRAVITY = 0.05 * 60 // pixels per second squared
+    const JUMP_STRENGTH = -2.5 * 60 // pixels per second
     const PIPE_WIDTH = 80
     const PIPE_HITBOX_WIDTH = 60 // Hitbox is narrower than visual pipe
     const PIPE_HITBOX_OFFSET = (PIPE_WIDTH - PIPE_HITBOX_WIDTH) / 2 // Center the hitbox
     const PIPE_GAP = 250
-    const PIPE_SPEED = 1.5
+    const PIPE_SPEED = 1.5 * 60 // pixels per second
     const BIRD_SIZE = 125 // Increased bird size from 50 to 125 (2.5x bigger)
     const BIRD_HITBOX_SIZE = 87 // Hitbox is smaller than visual size for fairer gameplay
-    const PIPE_SPAWN_INTERVAL = 300
+    const PIPE_SPAWN_INTERVAL = 5 // seconds
 
     let animationFrameId: number
+    let lastFrameTime = performance.now()
+    let lastPipeSpawnTime = 0
 
     const resetGame = () => {
       gameStateRef.current = {
@@ -58,6 +62,8 @@ export default function FlappyAudreyPage() {
       }
       setScore(0)
       gameOverRef.current = false
+      lastPipeSpawnTime = 0
+      lastFrameTime = performance.now()
     }
 
     const jump = () => {
@@ -156,8 +162,15 @@ export default function FlappyAudreyPage() {
       ctx.fillRect(0, canvas.height - 10, canvas.width, 10)
     }
 
-    const gameLoop = () => {
+    const gameLoop = (currentTime: number) => {
       if (!ctx || !canvas) return
+
+      // Calculate delta time in seconds
+      const deltaTime = (currentTime - lastFrameTime) / 1000
+      lastFrameTime = currentTime
+
+      // Cap deltaTime to prevent large jumps (e.g., when tab becomes active)
+      const clampedDeltaTime = Math.min(deltaTime, 0.1) // Max 100ms
 
       const state = gameStateRef.current
 
@@ -230,8 +243,9 @@ export default function FlappyAudreyPage() {
         return
       }
 
-      state.bird.velocity += GRAVITY
-      state.bird.y += state.bird.velocity
+      // Time-based physics
+      state.bird.velocity += GRAVITY * clampedDeltaTime
+      state.bird.y += state.bird.velocity * clampedDeltaTime
 
       if (state.bird.y + BIRD_SIZE > canvas.height) {
         gameOverRef.current = true
@@ -241,15 +255,19 @@ export default function FlappyAudreyPage() {
         }
       }
 
-      state.frame++
-      if (state.frame % PIPE_SPAWN_INTERVAL === 0) {
+      // Time-based pipe spawning
+      if (lastPipeSpawnTime === 0) {
+        lastPipeSpawnTime = currentTime
+      }
+      if (currentTime - lastPipeSpawnTime >= PIPE_SPAWN_INTERVAL * 1000) {
         const topHeight = Math.random() * (canvas.height - PIPE_GAP - 100) + 50
         state.pipes.push({ x: canvas.width, topHeight, scored: false })
+        lastPipeSpawnTime = currentTime
       }
 
       for (let i = state.pipes.length - 1; i >= 0; i--) {
         const pipe = state.pipes[i]
-        pipe.x -= PIPE_SPEED
+        pipe.x -= PIPE_SPEED * clampedDeltaTime
 
         ctx.fillStyle = "#90EE90"
         ctx.fillRect(pipe.x, 0, PIPE_WIDTH, pipe.topHeight)
@@ -329,7 +347,7 @@ export default function FlappyAudreyPage() {
       animationFrameId = requestAnimationFrame(gameLoop)
     }
 
-    gameLoop()
+    gameLoop(performance.now())
 
     return () => {
       cancelAnimationFrame(animationFrameId)
@@ -339,7 +357,8 @@ export default function FlappyAudreyPage() {
   }, [highScore])
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-300 to-sky-100 flex flex-col items-center justify-center p-4">
+    <ProtectedPage title="Flappy Audrey">
+      <div className="min-h-screen bg-gradient-to-b from-sky-300 to-sky-100 flex flex-col items-center justify-center p-4">
       <div className="text-center mb-6">
         <h1 className="font-serif text-4xl font-bold text-gray-800 mb-2">FlappyAudrey</h1>
         <p className="text-gray-600">A fun game for wedding guests!</p>
@@ -356,5 +375,6 @@ export default function FlappyAudreyPage() {
         <p className="text-sm text-gray-500 mt-2">Click or press Space to jump</p>
       </div>
     </div>
+    </ProtectedPage>
   )
 }

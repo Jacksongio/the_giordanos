@@ -1,56 +1,59 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
+import { useQuery, useMutation } from "convex/react"
+import { api } from "@/convex/_generated/api"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { ThumbsUp, ThumbsDown, Plus, X } from "lucide-react"
-import { getCocktails, upvoteCocktail, downvoteCocktail, addCocktail, type Cocktail } from "./actions"
+import { ArrowUp, ArrowDown, Plus, X } from "lucide-react"
+import { ProtectedPage } from "@/components/protected-page"
+import type { Id } from "@/convex/_generated/dataModel"
 
 export default function CocktailsPage() {
-  const [cocktails, setCocktails] = useState<Cocktail[]>([])
   const [showAddForm, setShowAddForm] = useState(false)
   const [newCocktail, setNewCocktail] = useState({
     name: "",
     description: "",
     ingredients: "",
   })
-  const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    loadCocktails()
-  }, [])
-
-  const loadCocktails = async () => {
-    setLoading(true)
-    const data = await getCocktails()
-    setCocktails(data)
-    setLoading(false)
-  }
+  // Use Convex hooks directly
+  const cocktails = useQuery(api.cocktails.getCocktails)
+  const addCocktailMutation = useMutation(api.cocktails.addCocktail)
+  const upvoteCocktailMutation = useMutation(api.cocktails.upvoteCocktail)
+  const downvoteCocktailMutation = useMutation(api.cocktails.downvoteCocktail)
 
   const handleUpvote = async (id: string) => {
-    await upvoteCocktail(id)
-    await loadCocktails()
+    await upvoteCocktailMutation({ cocktailId: id as Id<"cocktails"> })
   }
 
   const handleDownvote = async (id: string) => {
-    await downvoteCocktail(id)
-    await loadCocktails()
+    await downvoteCocktailMutation({ cocktailId: id as Id<"cocktails"> })
   }
 
   const handleAddCocktail = async () => {
     if (!newCocktail.name.trim()) return
 
-    await addCocktail(newCocktail.name, newCocktail.description, newCocktail.ingredients)
-
-    setNewCocktail({ name: "", description: "", ingredients: "" })
-    setShowAddForm(false)
-    await loadCocktails()
+    try {
+      await addCocktailMutation({
+        name: newCocktail.name,
+        description: newCocktail.description || undefined,
+        ingredients: newCocktail.ingredients || undefined,
+      })
+      setNewCocktail({ name: "", description: "", ingredients: "" })
+      setShowAddForm(false)
+    } catch (error) {
+      console.error("Error adding cocktail:", error)
+    }
   }
 
+  const isLoading = cocktails === undefined
+
   return (
-    <div className="min-h-screen bg-background">
+    <ProtectedPage title="Cocktail Suggestions">
+      <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="bg-primary/10 border-b border-border">
         <div className="max-w-4xl mx-auto px-4 py-8">
@@ -116,60 +119,70 @@ export default function CocktailsPage() {
         )}
 
         {/* Loading State */}
-        {loading && <div className="text-center py-12 text-muted-foreground">Loading cocktails...</div>}
+        {isLoading && <div className="text-center py-12 text-muted-foreground">Loading cocktails...</div>}
 
         {/* Cocktails List */}
-        {!loading && cocktails.length === 0 && (
+        {!isLoading && cocktails && cocktails.length === 0 && (
           <div className="text-center py-12 text-muted-foreground">No cocktails yet. Be the first to suggest one!</div>
         )}
 
         <div className="space-y-4">
-          {cocktails.map((cocktail, index) => (
-            <Card key={cocktail.id} className="p-6 bg-card hover:shadow-md transition-shadow">
-              <div className="flex items-start gap-4">
-                {/* Rank Badge */}
-                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                  <span className="font-bold text-lg text-primary">#{index + 1}</span>
-                </div>
+          {cocktails?.map((cocktail, index) => {
+            const score = cocktail.upvotes - cocktail.downvotes
+            return (
+              <Card key={cocktail._id} className="p-6 bg-card hover:shadow-md transition-shadow">
+                <div className="flex items-start gap-4">
+                  {/* Rank Badge */}
+                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                    <span className="font-bold text-lg text-primary">#{index + 1}</span>
+                  </div>
 
-                {/* Cocktail Info */}
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-xl font-semibold text-foreground mb-1">{cocktail.name}</h3>
-                  {cocktail.description && <p className="text-muted-foreground text-sm mb-2">{cocktail.description}</p>}
-                  {cocktail.ingredients && (
+                  {/* Cocktail Info */}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-xl font-semibold text-foreground mb-1">{cocktail.name}</h3>
+                    {cocktail.description && <p className="text-muted-foreground text-sm mb-2">{cocktail.description}</p>}
+                    {cocktail.ingredients && (
+                      <p className="text-xs text-muted-foreground mb-2">
+                        <span className="font-medium">Ingredients:</span> {cocktail.ingredients}
+                      </p>
+                    )}
                     <p className="text-xs text-muted-foreground">
-                      <span className="font-medium">Ingredients:</span> {cocktail.ingredients}
+                      Suggested by <span className="font-medium">{cocktail.suggested_by_name}</span>
                     </p>
-                  )}
+                  </div>
+
+                  {/* Voting Controls */}
+                  <div className="flex flex-col items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleUpvote(cocktail._id)}
+                      className="w-10 h-10 p-0"
+                    >
+                      <ArrowUp className="w-4 h-4" />
+                    </Button>
+
+                    <span className="font-bold text-lg text-foreground min-w-[2rem] text-center">{score}</span>
+                    <span className="text-xs text-muted-foreground text-center">
+                      {cocktail.upvotes}↑ {cocktail.downvotes}↓
+                    </span>
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleDownvote(cocktail._id)}
+                      className="w-10 h-10 p-0"
+                    >
+                      <ArrowDown className="w-4 h-4" />
+                    </Button>
+                  </div>
                 </div>
-
-                {/* Voting Controls */}
-                <div className="flex flex-col items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleUpvote(cocktail.id)}
-                    className="w-10 h-10 p-0"
-                  >
-                    <ThumbsUp className="w-4 h-4" />
-                  </Button>
-
-                  <span className="font-bold text-lg text-foreground min-w-[2rem] text-center">{cocktail.votes}</span>
-
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleDownvote(cocktail.id)}
-                    className="w-10 h-10 p-0"
-                  >
-                    <ThumbsDown className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-            </Card>
-          ))}
+              </Card>
+            )
+          })}
         </div>
       </div>
     </div>
+    </ProtectedPage>
   )
 }

@@ -4,8 +4,11 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
-import { Search, Music, ThumbsUp, Plus } from "lucide-react"
-import { getSongs, addSong, upvoteSong, type Song } from "./actions"
+import { Search, Music, ThumbsUp, ThumbsDown, Plus } from "lucide-react"
+import { useQuery, useMutation } from "convex/react"
+import { api } from "@/convex/_generated/api"
+import { ProtectedPage } from "@/components/protected-page"
+import type { Id } from "@/convex/_generated/dataModel"
 
 interface SpotifyTrack {
   id: string
@@ -18,18 +21,17 @@ interface SpotifyTrack {
 }
 
 export default function SongSuggestionsPage() {
-  const [songs, setSongs] = useState<Song[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [searchResults, setSearchResults] = useState<SpotifyTrack[]>([])
   const [isSearching, setIsSearching] = useState(false)
   const [showSearch, setShowSearch] = useState(false)
-  const [guestName, setGuestName] = useState("")
-  const [nameConfirmed, setNameConfirmed] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
-
-  useEffect(() => {
-    loadSongs()
-  }, [])
+  
+  // Use Convex hooks directly
+  const songs = useQuery(api.songs.getSongs)
+  const currentUser = useQuery(api.users.getCurrentUser)
+  const addSongMutation = useMutation(api.songs.addSong)
+  const upvoteSongMutation = useMutation(api.songs.upvoteSong)
+  const downvoteSongMutation = useMutation(api.songs.downvoteSong)
 
   useEffect(() => {
     if (!searchQuery.trim() || !showSearch) {
@@ -43,18 +45,6 @@ export default function SongSuggestionsPage() {
 
     return () => clearTimeout(timeoutId)
   }, [searchQuery, showSearch])
-
-  const loadSongs = async () => {
-    setIsLoading(true)
-    try {
-      const data = await getSongs()
-      setSongs(data)
-    } catch (error) {
-      console.error("Error loading songs:", error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
 
   const searchSpotify = async (query: string) => {
     if (!query.trim()) return
@@ -78,15 +68,13 @@ export default function SongSuggestionsPage() {
 
   const handleAddSong = async (track: SpotifyTrack) => {
     try {
-      await addSong({
+      await addSongMutation({
         song_name: track.name,
         artist_name: track.artists.map((a) => a.name).join(", "),
         spotify_id: track.id,
         album_image: track.album.images[0]?.url,
-        suggested_by: guestName || "Anonymous",
       })
 
-      await loadSongs()
       setSearchQuery("")
       setSearchResults([])
       setShowSearch(false)
@@ -100,13 +88,11 @@ export default function SongSuggestionsPage() {
     if (!searchQuery.trim()) return
 
     try {
-      await addSong({
+      await addSongMutation({
         song_name: searchQuery,
         artist_name: "Unknown Artist",
-        suggested_by: guestName || "Anonymous",
       })
 
-      await loadSongs()
       setSearchQuery("")
       setSearchResults([])
       setShowSearch(false)
@@ -116,18 +102,27 @@ export default function SongSuggestionsPage() {
     }
   }
 
-  const handleUpvote = async (songId: string) => {
+  const handleUpvote = async (songId: Id<"songs">) => {
     try {
-      await upvoteSong(songId)
-      await loadSongs()
+      await upvoteSongMutation({ songId })
     } catch (error) {
       console.error("Error upvoting song:", error)
       alert("Failed to upvote. Please try again.")
     }
   }
 
+  const handleDownvote = async (songId: Id<"songs">) => {
+    try {
+      await downvoteSongMutation({ songId })
+    } catch (error) {
+      console.error("Error downvoting song:", error)
+      alert("Failed to downvote. Please try again.")
+    }
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted">
+    <ProtectedPage title="Song Suggestions">
+      <div className="min-h-screen bg-gradient-to-b from-background to-muted">
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
@@ -135,37 +130,9 @@ export default function SongSuggestionsPage() {
           <p className="text-muted-foreground">Help us create the perfect playlist for our special day!</p>
         </div>
 
-        {/* Guest Name Input */}
-        {!nameConfirmed && (
-          <Card className="p-6 mb-6 bg-card">
-            <label className="block text-sm font-medium mb-2">Your Name</label>
-            <div className="flex gap-2">
-              <Input
-                placeholder="Enter your name..."
-                value={guestName}
-                onChange={(e) => setGuestName(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && guestName.trim()) {
-                    setNameConfirmed(true)
-                  }
-                }}
-                className="flex-1"
-              />
-              <Button
-                onClick={() => {
-                  setNameConfirmed(true)
-                }}
-                disabled={!guestName.trim()}
-              >
-                Continue
-              </Button>
-            </div>
-          </Card>
-        )}
-
-        {/* Add Song Button - Only enabled after name is confirmed */}
+        {/* Add Song Button */}
         {!showSearch && (
-          <Button onClick={() => setShowSearch(true)} className="w-full mb-6" size="lg" disabled={!nameConfirmed}>
+          <Button onClick={() => setShowSearch(true)} className="w-full mb-6" size="lg">
             <Plus className="w-5 h-5 mr-2" />
             Suggest a Song
           </Button>
@@ -249,7 +216,7 @@ export default function SongSuggestionsPage() {
 
         {/* Song List */}
         <div className="space-y-3">
-          {isLoading ? (
+          {songs === undefined ? (
             <Card className="p-12 text-center bg-card">
               <p className="text-muted-foreground">Loading songs...</p>
             </Card>
@@ -260,7 +227,7 @@ export default function SongSuggestionsPage() {
             </Card>
           ) : (
             songs.map((song) => (
-              <Card key={song.id} className="p-4 bg-card hover:shadow-md transition-shadow">
+              <Card key={song._id} className="p-4 bg-card hover:shadow-md transition-shadow">
                 <div className="flex items-center gap-4">
                   {song.album_image ? (
                     <img src={song.album_image || "/placeholder.svg"} alt="Album" className="w-16 h-16 rounded" />
@@ -272,17 +239,28 @@ export default function SongSuggestionsPage() {
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-lg truncate">{song.song_name}</h3>
                     <p className="text-muted-foreground truncate">{song.artist_name}</p>
-                    <p className="text-sm text-muted-foreground">Suggested by {song.suggested_by}</p>
+                    <p className="text-sm text-muted-foreground">Suggested by {song.suggested_by_name}</p>
                   </div>
-                  <Button
-                    onClick={() => handleUpvote(song.id)}
-                    variant="outline"
-                    size="lg"
-                    className="flex-col h-auto py-2 px-4"
-                  >
-                    <ThumbsUp className="w-5 h-5 mb-1" />
-                    <span className="text-lg font-bold">{song.votes}</span>
-                  </Button>
+                  <div className="flex flex-col gap-2">
+                    <Button
+                      onClick={() => handleUpvote(song._id)}
+                      variant={currentUser && song.upvoted_by.includes(currentUser._id) ? "default" : "outline"}
+                      size="sm"
+                      className="flex items-center gap-2"
+                    >
+                      <ThumbsUp className="w-4 h-4" />
+                      <span className="font-bold">{song.upvotes}</span>
+                    </Button>
+                    <Button
+                      onClick={() => handleDownvote(song._id)}
+                      variant={currentUser && song.downvoted_by.includes(currentUser._id) ? "default" : "outline"}
+                      size="sm"
+                      className="flex items-center gap-2"
+                    >
+                      <ThumbsDown className="w-4 h-4" />
+                      <span className="font-bold">{song.downvotes}</span>
+                    </Button>
+                  </div>
                 </div>
               </Card>
             ))
@@ -290,5 +268,6 @@ export default function SongSuggestionsPage() {
         </div>
       </div>
     </div>
+    </ProtectedPage>
   )
 }
