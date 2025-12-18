@@ -12,7 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { CheckCircle2, XCircle, Trophy, Camera, Share2, Medal } from "lucide-react"
+import { CheckCircle2, XCircle, Trophy, Camera, Medal } from "lucide-react"
 import { ProtectedPage } from "@/components/protected-page"
 import html2canvas from "html2canvas"
 import { toast } from "sonner"
@@ -109,160 +109,6 @@ export default function TriviaPage() {
   const scoreCardRef = useRef<HTMLDivElement>(null)
   const scoreCardRefExisting = useRef<HTMLDivElement>(null)
 
-  const shareToFacebook = async (score: number, total: number, percentage: number) => {
-    const shareText = `I took the Giordanos Trivia and got a score of: ${score} out of ${total} (${percentage}%)! 🎉`
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
-    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent)
-    const isAndroid = /Android/i.test(navigator.userAgent)
-    
-    // Capture the score card as an image (try both refs)
-    const cardElement = scoreCardRef.current || scoreCardRefExisting.current
-    if (cardElement) {
-      try {
-        const canvas = await html2canvas(cardElement, {
-          backgroundColor: null,
-          scale: 2,
-          logging: false,
-        })
-        
-        // Get data URL for image download
-        const dataUrl = canvas.toDataURL('image/png')
-        
-        canvas.toBlob(async (blob) => {
-          if (!blob) return
-          
-          // Try Web Share API first (opens native share sheet on mobile, can select Facebook app)
-          if (navigator.share && navigator.canShare) {
-            const file = new File([blob], 'trivia-score.png', { type: 'image/png' })
-            const shareData: any = {
-              title: 'The Giordanos Trivia',
-              text: shareText,
-              files: [file],
-            }
-            
-            if (navigator.canShare(shareData)) {
-              try {
-                await navigator.share(shareData)
-                return
-              } catch (err: any) {
-                // User cancelled or error, fall through to Facebook app/URL share
-                if (err.name === 'AbortError') {
-                  return // User cancelled, don't proceed
-                }
-                console.log('Web Share failed, trying Facebook app')
-              }
-            }
-          }
-          
-          // For mobile: Try to open Facebook app directly
-          if (isMobile) {
-            try {
-              // Copy text to clipboard first
-              await navigator.clipboard.writeText(shareText)
-              
-              // Try to open Facebook app
-              let facebookAppUrl: string | null = null
-              
-              if (isIOS) {
-                // iOS: Try fb:// URL scheme
-                facebookAppUrl = `fb://share?text=${encodeURIComponent(shareText)}`
-              } else if (isAndroid) {
-                // Android: Use intent URL to open Facebook app
-                const intentUrl = `intent://share?text=${encodeURIComponent(shareText)}#Intent;package=com.facebook.katana;scheme=fb;end`
-                facebookAppUrl = intentUrl
-              }
-              
-              if (facebookAppUrl) {
-                // Try to open Facebook app
-                window.location.href = facebookAppUrl
-                
-                // Fallback to mobile Facebook web after a delay if app doesn't open
-                setTimeout(() => {
-                  const shareUrl = encodeURIComponent(window.location.href)
-                  const mobileFacebookUrl = `https://m.facebook.com/sharer/sharer.php?u=${shareUrl}&quote=${encodeURIComponent(shareText)}`
-                  window.location.href = mobileFacebookUrl
-                }, 500)
-                return
-              }
-            } catch (err) {
-              console.error('Error opening Facebook app:', err)
-            }
-          }
-          
-          // For desktop: Copy text to clipboard, download image, then open Facebook
-          try {
-            // Copy text to clipboard
-            await navigator.clipboard.writeText(shareText)
-          } catch (err) {
-            console.error('Failed to copy to clipboard:', err)
-            toast.error('Failed to copy message', {
-              description: 'Please copy the message manually.',
-              duration: 3000,
-            })
-            return
-          }
-          
-          // Download the image
-          const link = document.createElement('a')
-          link.download = 'trivia-score.png'
-          link.href = dataUrl
-          document.body.appendChild(link)
-          link.click()
-          document.body.removeChild(link)
-          
-          // Show toast with instructions immediately (before opening Facebook)
-          toast.success('Ready to share!', {
-            description: 'Message copied to clipboard and image downloaded. Paste the message (Ctrl+V) and attach the image to your Facebook post.',
-            duration: 6000,
-          })
-          
-          // Open Facebook share dialog after a delay to ensure toast is visible
-          setTimeout(() => {
-            const shareUrl = encodeURIComponent(window.location.href)
-            const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`
-            window.open(facebookShareUrl, '_blank', 'width=600,height=400')
-          }, 800)
-        }, 'image/png')
-      } catch (error) {
-        console.error('Error capturing screenshot:', error)
-        // Fallback: copy text and open Facebook
-        try {
-          await navigator.clipboard.writeText(shareText)
-          toast.success('Message copied!', {
-            description: 'Paste it into your Facebook post.',
-            duration: 3000,
-          })
-        } catch (err) {
-          console.error('Failed to copy to clipboard:', err)
-          toast.error('Failed to copy message', {
-            description: 'Please copy the message manually.',
-            duration: 3000,
-          })
-        }
-        const shareUrl = encodeURIComponent(window.location.href)
-        const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`
-        window.open(facebookShareUrl, '_blank', 'width=600,height=400')
-      }
-    } else {
-      // Fallback if score card ref not available
-      try {
-        await navigator.clipboard.writeText(shareText)
-        toast.success('Message copied!', {
-          description: 'Paste it into your Facebook post.',
-          duration: 3000,
-        })
-      } catch (err) {
-        console.error('Failed to copy to clipboard:', err)
-        toast.error('Failed to copy message', {
-          description: 'Please copy the message manually.',
-          duration: 3000,
-        })
-      }
-      const shareUrl = encodeURIComponent(window.location.href)
-      const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`
-      window.open(facebookShareUrl, '_blank', 'width=600,height=400')
-    }
-  }
 
   const handleAnswerSelect = (answer: string) => {
     if (selectedAnswer || hasCompleted) return // Prevent changing answer or retaking
@@ -324,14 +170,6 @@ export default function TriviaPage() {
                 >
                   <Camera className="w-4 h-4" />
                   View Score Card
-                </Button>
-                <Button 
-                  onClick={() => shareToFacebook(existingScore.score, existingScore.total_questions, percentage)}
-                  size="lg"
-                  className="gap-2 bg-[#1877F2] hover:bg-[#166FE5] text-white"
-                >
-                  <Share2 className="w-4 h-4" />
-                  Share on Facebook
                 </Button>
               </div>
             </Card>
@@ -405,14 +243,6 @@ export default function TriviaPage() {
                 </p>
               </div>
             </div>
-            <Button 
-              onClick={() => shareToFacebook(existingScore.score, existingScore.total_questions, percentage)}
-              size="lg"
-              className="gap-2 w-full bg-[#1877F2] hover:bg-[#166FE5] text-white"
-            >
-              <Share2 className="w-4 h-4" />
-              Share on Facebook
-            </Button>
           </DialogContent>
         </Dialog>
       </ProtectedPage>
@@ -455,14 +285,6 @@ export default function TriviaPage() {
                 >
                   <Camera className="w-4 h-4" />
                   View Score Card
-                </Button>
-                <Button 
-                  onClick={() => shareToFacebook(finalScore, triviaQuestions.length, percentage)}
-                  size="lg"
-                  className="gap-2 bg-[#1877F2] hover:bg-[#166FE5] text-white"
-                >
-                  <Share2 className="w-4 h-4" />
-                  Share on Facebook
                 </Button>
               </div>
             </Card>
@@ -536,14 +358,6 @@ export default function TriviaPage() {
                 </p>
               </div>
             </div>
-            <Button 
-              onClick={() => shareToFacebook(finalScore, triviaQuestions.length, percentage)}
-              size="lg"
-              className="gap-2 w-full bg-[#1877F2] hover:bg-[#166FE5] text-white"
-            >
-              <Share2 className="w-4 h-4" />
-              Share on Facebook
-            </Button>
           </DialogContent>
         </Dialog>
       </ProtectedPage>
