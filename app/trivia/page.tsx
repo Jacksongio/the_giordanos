@@ -111,6 +111,9 @@ export default function TriviaPage() {
 
   const shareToFacebook = async (score: number, total: number, percentage: number) => {
     const shareText = `I took the Giordanos Trivia and got a score of: ${score} out of ${total} (${percentage}%)! 🎉`
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent)
+    const isAndroid = /Android/i.test(navigator.userAgent)
     
     // Capture the score card as an image (try both refs)
     const cardElement = scoreCardRef.current || scoreCardRefExisting.current
@@ -128,7 +131,7 @@ export default function TriviaPage() {
         canvas.toBlob(async (blob) => {
           if (!blob) return
           
-          // Try Web Share API first (supports images on some platforms)
+          // Try Web Share API first (opens native share sheet on mobile, can select Facebook app)
           if (navigator.share && navigator.canShare) {
             const file = new File([blob], 'trivia-score.png', { type: 'image/png' })
             const shareData: any = {
@@ -141,10 +144,48 @@ export default function TriviaPage() {
               try {
                 await navigator.share(shareData)
                 return
-              } catch (err) {
-                // User cancelled or error, fall through to manual share
-                console.log('Web Share cancelled or failed')
+              } catch (err: any) {
+                // User cancelled or error, fall through to Facebook app/URL share
+                if (err.name === 'AbortError') {
+                  return // User cancelled, don't proceed
+                }
+                console.log('Web Share failed, trying Facebook app')
               }
+            }
+          }
+          
+          // For mobile: Try to open Facebook app directly
+          if (isMobile) {
+            try {
+              // Copy text to clipboard first
+              await navigator.clipboard.writeText(shareText)
+              
+              // Try to open Facebook app
+              let facebookAppUrl: string | null = null
+              
+              if (isIOS) {
+                // iOS: Try fb:// URL scheme
+                facebookAppUrl = `fb://share?text=${encodeURIComponent(shareText)}`
+              } else if (isAndroid) {
+                // Android: Use intent URL to open Facebook app
+                const intentUrl = `intent://share?text=${encodeURIComponent(shareText)}#Intent;package=com.facebook.katana;scheme=fb;end`
+                facebookAppUrl = intentUrl
+              }
+              
+              if (facebookAppUrl) {
+                // Try to open Facebook app
+                window.location.href = facebookAppUrl
+                
+                // Fallback to mobile Facebook web after a delay if app doesn't open
+                setTimeout(() => {
+                  const shareUrl = encodeURIComponent(window.location.href)
+                  const mobileFacebookUrl = `https://m.facebook.com/sharer/sharer.php?u=${shareUrl}&quote=${encodeURIComponent(shareText)}`
+                  window.location.href = mobileFacebookUrl
+                }, 500)
+                return
+              }
+            } catch (err) {
+              console.error('Error opening Facebook app:', err)
             }
           }
           
