@@ -37,7 +37,17 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
     try {
       await signIn("google")
     } catch (err: any) {
-      setError(err.message || "An error occurred")
+      console.error("Google sign in error:", err)
+      
+      const errorMessage = err.message?.toLowerCase() || ""
+      
+      if (errorMessage.includes("popup") || errorMessage.includes("window")) {
+        setError("Popup was blocked. Please allow popups and try again.")
+      } else if (errorMessage.includes("cancelled") || errorMessage.includes("closed")) {
+        setError("Sign in was cancelled. Please try again.")
+      } else {
+        setError(err.message || "Unable to sign in with Google. Please try again.")
+      }
       setIsLoading(false)
     }
   }
@@ -58,7 +68,22 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
       onOpenChange(false)
       resetForm()
     } catch (err: any) {
-      setError(err.message || "Invalid email or password")
+      console.error("Sign in error:", err)
+      
+      // Handle specific error cases
+      const errorMessage = err.message?.toLowerCase() || ""
+      
+      if (errorMessage.includes("invalid credentials") || errorMessage.includes("invalid password")) {
+        setError("Invalid email or password. Please check your credentials and try again.")
+      } else if (errorMessage.includes("user not found") || errorMessage.includes("no account")) {
+        setError("No account found with this email. Please sign up first.")
+      } else if (errorMessage.includes("email")) {
+        setError("Please enter a valid email address.")
+      } else if (errorMessage.includes("password")) {
+        setError("Please check your password and try again.")
+      } else {
+        setError(err.message || "Unable to sign in. Please check your credentials and try again.")
+      }
     } finally {
       setIsLoading(false)
     }
@@ -81,7 +106,24 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
       onOpenChange(false)
       resetForm()
     } catch (err: any) {
-      setError(err.message || "An error occurred")
+      console.error("Sign up error:", err)
+      
+      // Handle specific error cases
+      const errorMessage = err.message?.toLowerCase() || ""
+      
+      if (errorMessage.includes("already exists") || errorMessage.includes("already registered")) {
+        setError("An account with this email already exists. Please sign in instead.")
+      } else if (errorMessage.includes("invalid email")) {
+        setError("Please enter a valid email address.")
+      } else if (errorMessage.includes("password") && errorMessage.includes("weak")) {
+        setError("Password is too weak. Please use at least 8 characters.")
+      } else if (errorMessage.includes("password") && errorMessage.includes("short")) {
+        setError("Password must be at least 8 characters long.")
+      } else if (errorMessage.includes("name")) {
+        setError("Please enter your name.")
+      } else {
+        setError(err.message || "Unable to create account. Please try again.")
+      }
     } finally {
       setIsLoading(false)
     }
@@ -103,7 +145,20 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
       setStep({ resetEmail: email })
       setError(null)
     } catch (err: any) {
-      setError(err.message || "Failed to send reset code")
+      console.error("Reset request error:", err)
+      
+      // Handle specific error cases
+      const errorMessage = err.message?.toLowerCase() || ""
+      
+      if (errorMessage.includes("user not found") || errorMessage.includes("no account")) {
+        setError("No account found with this email. Please check your email or sign up.")
+      } else if (errorMessage.includes("invalid email")) {
+        setError("Please enter a valid email address.")
+      } else if (errorMessage.includes("too many")) {
+        setError("Too many reset requests. Please try again later.")
+      } else {
+        setError(err.message || "Failed to send reset code. Please try again.")
+      }
     } finally {
       setIsLoading(false)
     }
@@ -127,7 +182,22 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
       resetForm()
       setStep("signIn")
     } catch (err: any) {
-      setError(err.message || "Invalid code or password")
+      console.error("Reset password error:", err)
+      
+      // Handle specific error cases
+      const errorMessage = err.message?.toLowerCase() || ""
+      
+      if (errorMessage.includes("invalid code") || errorMessage.includes("wrong code")) {
+        setError("Invalid reset code. Please check the code and try again.")
+      } else if (errorMessage.includes("expired")) {
+        setError("Reset code has expired. Please request a new one.")
+      } else if (errorMessage.includes("password") && (errorMessage.includes("weak") || errorMessage.includes("short"))) {
+        setError("Password must be at least 8 characters long.")
+      } else if (errorMessage.includes("already used")) {
+        setError("This reset code has already been used. Please request a new one.")
+      } else {
+        setError(err.message || "Unable to reset password. Please check your code and try again.")
+      }
     } finally {
       setIsLoading(false)
     }
