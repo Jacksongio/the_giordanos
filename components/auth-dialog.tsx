@@ -162,24 +162,9 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
     } catch (err: any) {
       console.error("Reset request error:", err)
       
-      // Handle specific error cases
-      const errorMessage = err.message?.toLowerCase() || ""
-      
-      if (errorMessage.includes("user not found") || errorMessage.includes("no account")) {
-        setError("No account found with this email. Please check your email or sign up.")
-      } else if (errorMessage.includes("invalid email")) {
-        setError("Please enter a valid email address.")
-      } else if (errorMessage.includes("too many") || errorMessage.includes("rate limit")) {
-        setError("Too many reset requests. Please wait a few minutes and try again.")
-      } else if (errorMessage.includes("email") && errorMessage.includes("fail")) {
-        setError("Failed to send email. Please check your email address or try again later.")
-      } else if (errorMessage.includes("network") || errorMessage.includes("timeout")) {
-        setError("Network error. Please check your connection and try again.")
-      } else if (errorMessage.includes("service unavailable") || errorMessage.includes("503")) {
-        setError("Service temporarily unavailable. Please try again in a few minutes.")
-      } else {
-        setError(err.message || "Failed to send reset code. Please try again or contact support.")
-      }
+      // For ANY error, show a user-friendly message
+      // We don't want to expose technical details to users
+      setError("Sorry, we had trouble sending the reset email. Please try again in a few minutes or contact support if the problem persists.")
     } finally {
       setIsLoading(false)
     }
@@ -235,28 +220,9 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
     } catch (err: any) {
       console.error("Reset password error:", err)
       
-      // Handle specific error cases
-      const errorMessage = err.message?.toLowerCase() || ""
-      
-      if (errorMessage.includes("invalid code") || errorMessage.includes("wrong code") || errorMessage.includes("incorrect code")) {
-        setError("Invalid reset code. Please check the code and try again.")
-      } else if (errorMessage.includes("expired")) {
-        setError("Reset code has expired. Please request a new one.")
-      } else if (errorMessage.includes("password") && (errorMessage.includes("weak") || errorMessage.includes("short"))) {
-        setError("Password must be at least 8 characters long with uppercase, lowercase, and numbers.")
-      } else if (errorMessage.includes("already used") || errorMessage.includes("used")) {
-        setError("This reset code has already been used. Please request a new one.")
-      } else if (errorMessage.includes("too many attempts")) {
-        setError("Too many attempts. Please request a new reset code.")
-      } else if (errorMessage.includes("network") || errorMessage.includes("timeout")) {
-        setError("Network error. Please check your connection and try again.")
-      } else if (errorMessage.includes("service unavailable") || errorMessage.includes("503")) {
-        setError("Service temporarily unavailable. Please try again in a few minutes.")
-      } else if (errorMessage.includes("password") && errorMessage.includes("common")) {
-        setError("This password is too common. Please choose a more secure password.")
-      } else {
-        setError(err.message || "Unable to reset password. Please verify your code or request a new one.")
-      }
+      // For ANY error, show a user-friendly message
+      // The most common issues are invalid or expired codes
+      setError("Sorry, we had trouble resetting your password. The code may be invalid or expired. Please request a new reset code and try again.")
     } finally {
       setIsLoading(false)
     }
