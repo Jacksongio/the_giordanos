@@ -33,7 +33,7 @@ export function WeddingDetails() {
                   <div className="flex items-start gap-3">
                     <Clock className="h-5 w-5 text-primary mt-0.5" />
                     <div>
-                      <p className="font-medium text-foreground">5:00 PM</p>
+                      <p className="font-medium text-foreground">Please arrive by 5:00 PM</p>
                       <p>Sunday May 30, 2027</p>
                     </div>
                   </div>

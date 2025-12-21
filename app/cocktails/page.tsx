@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { ArrowUp, ArrowDown, Plus, X } from "lucide-react"
 import { ProtectedPage } from "@/components/protected-page"
 import type { Id } from "@/convex/_generated/dataModel"
+import { motion, AnimatePresence } from "framer-motion"
 
 export default function CocktailsPage() {
   const [showAddForm, setShowAddForm] = useState(false)
@@ -127,59 +128,73 @@ export default function CocktailsPage() {
         )}
 
         <div className="space-y-4">
-          {cocktails?.map((cocktail, index) => {
-            const score = cocktail.upvotes - cocktail.downvotes
-            return (
-              <Card key={cocktail._id} className="p-6 bg-card hover:shadow-md transition-shadow">
-                <div className="flex items-start gap-4">
-                  {/* Rank Badge */}
-                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                    <span className="font-bold text-lg text-primary">#{index + 1}</span>
-                  </div>
+          <AnimatePresence mode="popLayout">
+            {cocktails?.map((cocktail, index) => {
+              const score = cocktail.upvotes - cocktail.downvotes
+              return (
+                <motion.div
+                  key={cocktail._id}
+                  layout
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{
+                    layout: { type: "spring", stiffness: 350, damping: 30 },
+                    opacity: { duration: 0.2 },
+                  }}
+                >
+                  <Card className="p-6 bg-card hover:shadow-md transition-shadow">
+                    <div className="flex items-start gap-4">
+                      {/* Rank Badge */}
+                      <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                        <span className="font-bold text-lg text-primary">#{index + 1}</span>
+                      </div>
 
-                  {/* Cocktail Info */}
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-xl font-semibold text-foreground mb-1">{cocktail.name}</h3>
-                    {cocktail.description && <p className="text-muted-foreground text-sm mb-2">{cocktail.description}</p>}
-                    {cocktail.ingredients && (
-                      <p className="text-xs text-muted-foreground mb-2">
-                        <span className="font-medium">Ingredients:</span> {cocktail.ingredients}
-                      </p>
-                    )}
-                    <p className="text-xs text-muted-foreground">
-                      Suggested by <span className="font-medium">{cocktail.suggested_by_name}</span>
-                    </p>
-                  </div>
+                      {/* Cocktail Info */}
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-xl font-semibold text-foreground mb-1">{cocktail.name}</h3>
+                        {cocktail.description && <p className="text-muted-foreground text-sm mb-2">{cocktail.description}</p>}
+                        {cocktail.ingredients && (
+                          <p className="text-xs text-muted-foreground mb-2">
+                            <span className="font-medium">Ingredients:</span> {cocktail.ingredients}
+                          </p>
+                        )}
+                        <p className="text-xs text-muted-foreground">
+                          Suggested by <span className="font-medium">{cocktail.suggested_by_name}</span>
+                        </p>
+                      </div>
 
-                  {/* Voting Controls */}
-                  <div className="flex flex-col items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleUpvote(cocktail._id)}
-                      className="w-10 h-10 p-0"
-                    >
-                      <ArrowUp className="w-4 h-4" />
-                    </Button>
+                      {/* Voting Controls */}
+                      <div className="flex flex-col items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleUpvote(cocktail._id)}
+                          className="w-10 h-10 p-0"
+                        >
+                          <ArrowUp className="w-4 h-4" />
+                        </Button>
 
-                    <span className="font-bold text-lg text-foreground min-w-[2rem] text-center">{score}</span>
-                    <span className="text-xs text-muted-foreground text-center">
-                      {cocktail.upvotes}↑ {cocktail.downvotes}↓
-                    </span>
+                        <span className="font-bold text-lg text-foreground min-w-[2rem] text-center">{score}</span>
+                        <span className="text-xs text-muted-foreground text-center">
+                          {cocktail.upvotes}↑ {cocktail.downvotes}↓
+                        </span>
 
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDownvote(cocktail._id)}
-                      className="w-10 h-10 p-0"
-                    >
-                      <ArrowDown className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-              </Card>
-            )
-          })}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDownvote(cocktail._id)}
+                          className="w-10 h-10 p-0"
+                        >
+                          <ArrowDown className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </Card>
+                </motion.div>
+              )
+            })}
+          </AnimatePresence>
         </div>
       </div>
     </div>

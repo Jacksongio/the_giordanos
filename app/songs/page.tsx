@@ -9,6 +9,7 @@ import { useQuery, useMutation } from "convex/react"
 import { api } from "@/convex/_generated/api"
 import { ProtectedPage } from "@/components/protected-page"
 import type { Id } from "@/convex/_generated/dataModel"
+import { motion, AnimatePresence } from "framer-motion"
 
 interface SpotifyTrack {
   id: string
@@ -226,44 +227,58 @@ export default function SongSuggestionsPage() {
               <p className="text-muted-foreground">No songs suggested yet. Be the first!</p>
             </Card>
           ) : (
-            songs.map((song) => (
-              <Card key={song._id} className="p-4 bg-card hover:shadow-md transition-shadow">
-                <div className="flex items-center gap-4">
-                  {song.album_image ? (
-                    <img src={song.album_image || "/placeholder.svg"} alt="Album" className="w-16 h-16 rounded" />
-                  ) : (
-                    <div className="w-16 h-16 bg-muted rounded flex items-center justify-center">
-                      <Music className="w-8 h-8 text-muted-foreground" />
+            <AnimatePresence mode="popLayout">
+              {songs.map((song) => (
+                <motion.div
+                  key={song._id}
+                  layout
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{
+                    layout: { type: "spring", stiffness: 350, damping: 30 },
+                    opacity: { duration: 0.2 },
+                  }}
+                >
+                  <Card className="p-4 bg-card hover:shadow-md transition-shadow">
+                    <div className="flex items-center gap-4">
+                      {song.album_image ? (
+                        <img src={song.album_image || "/placeholder.svg"} alt="Album" className="w-16 h-16 rounded" />
+                      ) : (
+                        <div className="w-16 h-16 bg-muted rounded flex items-center justify-center">
+                          <Music className="w-8 h-8 text-muted-foreground" />
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-lg truncate">{song.song_name}</h3>
+                        <p className="text-muted-foreground truncate">{song.artist_name}</p>
+                        <p className="text-sm text-muted-foreground">Suggested by {song.suggested_by_name}</p>
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <Button
+                          onClick={() => handleUpvote(song._id)}
+                          variant={currentUser && song.upvoted_by.includes(currentUser._id as Id<"users">) ? "default" : "outline"}
+                          size="sm"
+                          className="flex items-center gap-2"
+                        >
+                          <ThumbsUp className="w-4 h-4" />
+                          <span className="font-bold">{song.upvotes}</span>
+                        </Button>
+                        <Button
+                          onClick={() => handleDownvote(song._id)}
+                          variant={currentUser && song.downvoted_by.includes(currentUser._id as Id<"users">) ? "default" : "outline"}
+                          size="sm"
+                          className="flex items-center gap-2"
+                        >
+                          <ThumbsDown className="w-4 h-4" />
+                          <span className="font-bold">{song.downvotes}</span>
+                        </Button>
+                      </div>
                     </div>
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-lg truncate">{song.song_name}</h3>
-                    <p className="text-muted-foreground truncate">{song.artist_name}</p>
-                    <p className="text-sm text-muted-foreground">Suggested by {song.suggested_by_name}</p>
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <Button
-                      onClick={() => handleUpvote(song._id)}
-                      variant={currentUser && song.upvoted_by.includes(currentUser._id as Id<"users">) ? "default" : "outline"}
-                      size="sm"
-                      className="flex items-center gap-2"
-                    >
-                      <ThumbsUp className="w-4 h-4" />
-                      <span className="font-bold">{song.upvotes}</span>
-                    </Button>
-                    <Button
-                      onClick={() => handleDownvote(song._id)}
-                      variant={currentUser && song.downvoted_by.includes(currentUser._id as Id<"users">) ? "default" : "outline"}
-                      size="sm"
-                      className="flex items-center gap-2"
-                    >
-                      <ThumbsDown className="w-4 h-4" />
-                      <span className="font-bold">{song.downvotes}</span>
-                    </Button>
-                  </div>
-                </div>
-              </Card>
-            ))
+                  </Card>
+                </motion.div>
+              ))}
+            </AnimatePresence>
           )}
         </div>
       </div>
