@@ -262,7 +262,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
               <Input
                 id="code"
                 type="text"
-                placeholder="Enter code from console"
+                placeholder="Enter code from email"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 required

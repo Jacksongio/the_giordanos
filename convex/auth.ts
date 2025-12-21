@@ -8,7 +8,7 @@ import { Resend as ResendAPI } from "resend"
 const PasswordResetProvider = Resend({
   id: "password-reset",
   apiKey: process.env.AUTH_RESEND_KEY,
-  from: "The Giordanos Wedding <onboarding@resend.dev>",
+  from: process.env.AUTH_RESEND_FROM || "The Giordanos Wedding <onboarding@resend.dev>",
   async sendVerificationRequest({ identifier: email, provider, token }) {
     // Log to console
     console.log("🔐 PASSWORD RESET CODE for", email)
@@ -29,7 +29,7 @@ const PasswordResetProvider = Resend({
         const resend = new ResendAPI(provider.apiKey)
         
         const result = await resend.emails.send({
-          from: provider.from,
+          from: provider.from as string,
           to: [email],
           subject: "Reset Your Password - The Giordanos Wedding",
           html: `
