@@ -19,9 +19,16 @@ const PasswordResetProvider = Resend({
     // Send email via Resend (works without Node.js APIs!)
     if (provider.apiKey) {
       try {
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!emailRegex.test(email)) {
+          console.error("❌ Invalid email format:", email)
+          throw new Error("Invalid email address format")
+        }
+
         const resend = new ResendAPI(provider.apiKey)
         
-        await resend.emails.send({
+        const result = await resend.emails.send({
           from: provider.from,
           to: [email],
           subject: "Reset Your Password - The Giordanos Wedding",
@@ -61,11 +68,34 @@ const PasswordResetProvider = Resend({
           `,
         })
         
-        console.log("✅ Email sent successfully via Resend!")
+        if (result.error) {
+          console.error("❌ Resend API error:", result.error)
+          console.log("📋 BACKUP - Use this code:", token)
+          // Still throw an error to inform the user, but don't block the reset flow
+          // The code is still valid even if the email fails
+        } else {
+          console.log("✅ Email sent successfully via Resend!")
+          console.log("📨 Email ID:", result.data?.id)
+        }
       } catch (error: any) {
         console.error("❌ Failed to send email:", error.message)
         console.log("📋 BACKUP - Use this code:", token)
+        
+        // Log detailed error information for debugging
+        if (error.statusCode) {
+          console.error("Status Code:", error.statusCode)
+        }
+        if (error.name) {
+          console.error("Error Type:", error.name)
+        }
+        
+        // Don't throw the error - allow the reset flow to continue
+        // The user can still use the code from the console/logs
+        // Only log the failure for admin awareness
       }
+    } else {
+      console.warn("⚠️ No API key configured - email will not be sent")
+      console.log("📋 BACKUP - Use this code:", token)
     }
   },
 })

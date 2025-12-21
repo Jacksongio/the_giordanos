@@ -134,9 +134,24 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
     setError(null)
     setIsLoading(true)
 
+    // Client-side validation
+    if (!email || email.trim() === "") {
+      setError("Please enter your email address.")
+      setIsLoading(false)
+      return
+    }
+
+    // Basic email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      setError("Please enter a valid email address.")
+      setIsLoading(false)
+      return
+    }
+
     try {
       const formData = new FormData()
-      formData.append("email", email)
+      formData.append("email", email.trim())
       formData.append("flow", "reset")
 
       await signIn("password", formData)
@@ -154,10 +169,16 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
         setError("No account found with this email. Please check your email or sign up.")
       } else if (errorMessage.includes("invalid email")) {
         setError("Please enter a valid email address.")
-      } else if (errorMessage.includes("too many")) {
-        setError("Too many reset requests. Please try again later.")
+      } else if (errorMessage.includes("too many") || errorMessage.includes("rate limit")) {
+        setError("Too many reset requests. Please wait a few minutes and try again.")
+      } else if (errorMessage.includes("email") && errorMessage.includes("fail")) {
+        setError("Failed to send email. Please check your email address or try again later.")
+      } else if (errorMessage.includes("network") || errorMessage.includes("timeout")) {
+        setError("Network error. Please check your connection and try again.")
+      } else if (errorMessage.includes("service unavailable") || errorMessage.includes("503")) {
+        setError("Service temporarily unavailable. Please try again in a few minutes.")
       } else {
-        setError(err.message || "Failed to send reset code. Please try again.")
+        setError(err.message || "Failed to send reset code. Please try again or contact support.")
       }
     } finally {
       setIsLoading(false)
@@ -169,10 +190,40 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
     setError(null)
     setIsLoading(true)
 
+    // Client-side validation
+    if (!code || code.trim() === "") {
+      setError("Please enter the reset code.")
+      setIsLoading(false)
+      return
+    }
+
+    if (!newPassword || newPassword.trim() === "") {
+      setError("Please enter a new password.")
+      setIsLoading(false)
+      return
+    }
+
+    if (newPassword.length < 8) {
+      setError("Password must be at least 8 characters long.")
+      setIsLoading(false)
+      return
+    }
+
+    // Check for password strength
+    const hasUpperCase = /[A-Z]/.test(newPassword)
+    const hasLowerCase = /[a-z]/.test(newPassword)
+    const hasNumber = /[0-9]/.test(newPassword)
+    
+    if (!hasUpperCase || !hasLowerCase || !hasNumber) {
+      setError("Password must contain at least one uppercase letter, one lowercase letter, and one number.")
+      setIsLoading(false)
+      return
+    }
+
     try {
       const formData = new FormData()
       formData.append("email", typeof step === "object" ? step.resetEmail : email)
-      formData.append("code", code)
+      formData.append("code", code.trim())
       formData.append("newPassword", newPassword)
       formData.append("flow", "reset-verification")
 
@@ -187,16 +238,24 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
       // Handle specific error cases
       const errorMessage = err.message?.toLowerCase() || ""
       
-      if (errorMessage.includes("invalid code") || errorMessage.includes("wrong code")) {
+      if (errorMessage.includes("invalid code") || errorMessage.includes("wrong code") || errorMessage.includes("incorrect code")) {
         setError("Invalid reset code. Please check the code and try again.")
       } else if (errorMessage.includes("expired")) {
         setError("Reset code has expired. Please request a new one.")
       } else if (errorMessage.includes("password") && (errorMessage.includes("weak") || errorMessage.includes("short"))) {
-        setError("Password must be at least 8 characters long.")
-      } else if (errorMessage.includes("already used")) {
+        setError("Password must be at least 8 characters long with uppercase, lowercase, and numbers.")
+      } else if (errorMessage.includes("already used") || errorMessage.includes("used")) {
         setError("This reset code has already been used. Please request a new one.")
+      } else if (errorMessage.includes("too many attempts")) {
+        setError("Too many attempts. Please request a new reset code.")
+      } else if (errorMessage.includes("network") || errorMessage.includes("timeout")) {
+        setError("Network error. Please check your connection and try again.")
+      } else if (errorMessage.includes("service unavailable") || errorMessage.includes("503")) {
+        setError("Service temporarily unavailable. Please try again in a few minutes.")
+      } else if (errorMessage.includes("password") && errorMessage.includes("common")) {
+        setError("This password is too common. Please choose a more secure password.")
       } else {
-        setError(err.message || "Unable to reset password. Please check your code and try again.")
+        setError(err.message || "Unable to reset password. Please verify your code or request a new one.")
       }
     } finally {
       setIsLoading(false)
@@ -227,6 +286,9 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
             <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
               <p className="text-xs text-blue-900 dark:text-blue-100">
                 📧 <strong>Check your email!</strong> We've sent a reset code to your inbox. Also check Convex terminal if configured.
+              </p>
+              <p className="text-xs text-blue-700 dark:text-blue-300 mt-2">
+                💡 <strong>Tip:</strong> The code expires in 1 hour. If you don't receive it, check your spam folder or request a new code.
               </p>
             </div>
             <div className="space-y-2">
@@ -262,17 +324,33 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Resetting..." : "Reset Password"}
             </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              className="w-full"
-              onClick={() => {
-                setStep("forgotPassword")
-                setError(null)
-              }}
-            >
-              Back
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                className="flex-1"
+                onClick={() => {
+                  setStep("forgotPassword")
+                  setCode("")
+                  setNewPassword("")
+                  setError(null)
+                }}
+              >
+                Request New Code
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                className="flex-1"
+                onClick={() => {
+                  setStep("signIn")
+                  setError(null)
+                  resetForm()
+                }}
+              >
+                Cancel
+              </Button>
+            </div>
           </form>
         </>
       )
