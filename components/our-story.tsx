@@ -20,7 +20,7 @@ export function OurStory() {
                 <h3 className="font-serif text-2xl font-medium text-foreground">Our First Date</h3>
                 <p className="text-muted-foreground leading-relaxed">
                   {
-                    'It was a sunny day, Jackson picked up Audrey from her job at the time "Halwa" a nice coffee shop in Blacksburg, VA. First we went to Hahn Horticulture Garden at Virginia Tech and walked around with our coffees just getting to know eachother. Then Jackson drove us to Duck Pond (an iconic pond with walking paths in Blacksburg, VA) we walked around and just got to know eachother. Afterwards we came back to Halwa where the two of them sad and had yet ANOTHER coffee while playing chess. Afterwards Jackson had to go and he gave Audrey a hug goodbye.'
+                    'It was a sunny day, Jackson picked up Audrey from her job at the time "Halwa" a nice coffee shop in Blacksburg, VA. First we went to Hahn Horticulture Garden at Virginia Tech and walked around with our coffees just getting to know eachother. Then Jackson drove us to Duck Pond (an iconic pond with walking paths in Blacksburg, VA) we walked around and just got to know eachother. Afterwards we came back to Halwa where the two of them sad and had yet ANOTHER coffee, and the rest is history.'
                   }
                 </p>
               </div>

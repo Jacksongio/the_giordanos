@@ -58,7 +58,7 @@ export default function CocktailsPage() {
       <div className="bg-primary/10 border-b border-border">
         <div className="max-w-4xl mx-auto px-4 py-8">
           <h1 className="font-serif text-4xl font-bold text-foreground mb-2">Cocktail Rankings</h1>
-          <p className="text-muted-foreground">Vote for your favorite cocktails for the wedding reception!</p>
+          <p className="text-muted-foreground">Vote for your favorite cocktails for the wedding reception! The top 3 rated drinks will be added to the bar named after whoever suggested them!</p>
         </div>
       </div>
 

@@ -1,7 +1,14 @@
+"use client"
+
 import { Card } from "@/components/ui/card"
-import { Calendar, Clock, MapPin, Camera, Music, Utensils } from "lucide-react"
+import { Calendar, Clock, MapPin, Camera, Music, Utensils, Lock } from "lucide-react"
+import { useQuery } from "convex/react"
+import { api } from "@/convex/_generated/api"
 
 export function WeddingDetails() {
+  const currentUser = useQuery(api.users.getCurrentUser)
+  const isAuthenticated = currentUser !== null && currentUser !== undefined
+
   return (
     <section id="details" className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
       <div className="max-w-6xl mx-auto">
@@ -21,23 +28,30 @@ export function WeddingDetails() {
                 <Calendar className="h-6 w-6 text-primary" />
                 Ceremony
               </h3>
-              <div className="space-y-4 text-muted-foreground">
-                <div className="flex items-start gap-3">
-                  <Clock className="h-5 w-5 text-primary mt-0.5" />
-                  <div>
-                    <p className="font-medium text-foreground">5:00 PM</p>
-                    <p>Sunday May 30, 2027</p>
+              {isAuthenticated ? (
+                <div className="space-y-4 text-muted-foreground">
+                  <div className="flex items-start gap-3">
+                    <Clock className="h-5 w-5 text-primary mt-0.5" />
+                    <div>
+                      <p className="font-medium text-foreground">5:00 PM</p>
+                      <p>Sunday May 30, 2027</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <MapPin className="h-5 w-5 text-primary mt-0.5" />
+                    <div>
+                      <p className="font-medium text-foreground">Raspberry Manor</p>
+                      <p>16500 Agape Ln</p>
+                      <p>Leesburg, VA 20176</p>
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-start gap-3">
-                  <MapPin className="h-5 w-5 text-primary mt-0.5" />
-                  <div>
-                    <p className="font-medium text-foreground">Raspberry Manor</p>
-                    <p>16500 Agape Ln</p>
-                    <p>Leesburg, VA 20176</p>
-                  </div>
+              ) : (
+                <div className="text-center py-8">
+                  <Lock className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground">Sign in to view ceremony details</p>
                 </div>
-              </div>
+              )}
             </div>
           </Card>
 
@@ -47,22 +61,29 @@ export function WeddingDetails() {
                 <Utensils className="h-6 w-6 text-primary" />
                 Reception
               </h3>
-              <div className="space-y-4 text-muted-foreground">
-                <div className="flex items-start gap-3">
-                  <Clock className="h-5 w-5 text-primary mt-0.5" />
-                  <div>
-                    <p className="font-medium text-foreground">6:00 PM - 11:00 PM</p>
-                    <p>Cocktails, Dinner & Dancing</p>
+              {isAuthenticated ? (
+                <div className="space-y-4 text-muted-foreground">
+                  <div className="flex items-start gap-3">
+                    <Clock className="h-5 w-5 text-primary mt-0.5" />
+                    <div>
+                      <p className="font-medium text-foreground">6:00 PM - 11:00 PM</p>
+                      <p>Cocktails, Dinner & Dancing</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <MapPin className="h-5 w-5 text-primary mt-0.5" />
+                    <div>
+                      <p className="font-medium text-foreground">The Grand Ballroom</p>
+                      <p>Same venue as ceremony</p>
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-start gap-3">
-                  <MapPin className="h-5 w-5 text-primary mt-0.5" />
-                  <div>
-                    <p className="font-medium text-foreground">The Grand Ballroom</p>
-                    <p>Same venue as ceremony</p>
-                  </div>
+              ) : (
+                <div className="text-center py-8">
+                  <Lock className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground">Sign in to view reception details</p>
                 </div>
-              </div>
+              )}
             </div>
           </Card>
         </div>

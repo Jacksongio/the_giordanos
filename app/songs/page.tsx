@@ -127,7 +127,7 @@ export default function SongSuggestionsPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="font-serif text-4xl md:text-5xl text-foreground mb-2">Song Suggestions</h1>
-          <p className="text-muted-foreground">Help us create the perfect playlist for our special day!</p>
+          <p className="text-muted-foreground">Help us gather the best songs to suggest for the DJ!</p>
         </div>
 
         {/* Add Song Button */}
@@ -244,7 +244,7 @@ export default function SongSuggestionsPage() {
                   <div className="flex flex-col gap-2">
                     <Button
                       onClick={() => handleUpvote(song._id)}
-                      variant={currentUser && song.upvoted_by.includes(currentUser._id) ? "default" : "outline"}
+                      variant={currentUser && song.upvoted_by.includes(currentUser._id as Id<"users">) ? "default" : "outline"}
                       size="sm"
                       className="flex items-center gap-2"
                     >
@@ -253,7 +253,7 @@ export default function SongSuggestionsPage() {
                     </Button>
                     <Button
                       onClick={() => handleDownvote(song._id)}
-                      variant={currentUser && song.downvoted_by.includes(currentUser._id) ? "default" : "outline"}
+                      variant={currentUser && song.downvoted_by.includes(currentUser._id as Id<"users">) ? "default" : "outline"}
                       size="sm"
                       className="flex items-center gap-2"
                     >
