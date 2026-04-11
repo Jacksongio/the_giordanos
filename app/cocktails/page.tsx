@@ -17,7 +17,6 @@ export default function CocktailsPage() {
   const [newCocktail, setNewCocktail] = useState({
     name: "",
     description: "",
-    ingredients: "",
   })
 
   // Use Convex hooks directly
@@ -41,9 +40,8 @@ export default function CocktailsPage() {
       await addCocktailMutation({
         name: newCocktail.name,
         description: newCocktail.description || undefined,
-        ingredients: newCocktail.ingredients || undefined,
       })
-      setNewCocktail({ name: "", description: "", ingredients: "" })
+      setNewCocktail({ name: "", description: "" })
       setShowAddForm(false)
     } catch (error) {
       console.error("Error adding cocktail:", error)
@@ -102,16 +100,6 @@ export default function CocktailsPage() {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-2">Ingredients</label>
-                <Textarea
-                  placeholder="List the main ingredients..."
-                  value={newCocktail.ingredients}
-                  onChange={(e) => setNewCocktail({ ...newCocktail, ingredients: e.target.value })}
-                  rows={2}
-                />
-              </div>
-
               <Button onClick={handleAddCocktail} disabled={!newCocktail.name.trim()} className="w-full">
                 Add Cocktail
               </Button>
@@ -143,40 +131,35 @@ export default function CocktailsPage() {
                     opacity: { duration: 0.2 },
                   }}
                 >
-                  <Card className="p-6 bg-card hover:shadow-md transition-shadow">
-                    <div className="flex items-start gap-4">
+                  <Card className="p-4 bg-card hover:shadow-md transition-shadow">
+                    <div className="flex items-center gap-4">
                       {/* Rank Badge */}
-                      <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                        <span className="font-bold text-lg text-primary">#{index + 1}</span>
+                      <div className="flex-shrink-0 w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
+                        <span className="font-bold text-xl text-primary">#{index + 1}</span>
                       </div>
 
                       {/* Cocktail Info */}
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-xl font-semibold text-foreground mb-1">{cocktail.name}</h3>
-                        {cocktail.description && <p className="text-muted-foreground text-sm mb-2">{cocktail.description}</p>}
-                        {cocktail.ingredients && (
-                          <p className="text-xs text-muted-foreground mb-2">
-                            <span className="font-medium">Ingredients:</span> {cocktail.ingredients}
-                          </p>
-                        )}
-                        <p className="text-xs text-muted-foreground">
+                        <h3 className="text-2xl font-semibold text-foreground">{cocktail.name}</h3>
+                        {cocktail.description && <p className="text-muted-foreground mt-1">{cocktail.description}</p>}
+                        <p className="text-sm text-muted-foreground mt-1">
                           Suggested by <span className="font-medium">{cocktail.suggested_by_name}</span>
                         </p>
                       </div>
 
                       {/* Voting Controls */}
-                      <div className="flex flex-col items-center gap-2">
+                      <div className="flex flex-col items-center gap-1">
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => handleUpvote(cocktail._id)}
                           className="w-10 h-10 p-0"
                         >
-                          <ArrowUp className="w-4 h-4" />
+                          <ArrowUp className="w-5 h-5" />
                         </Button>
 
-                        <span className="font-bold text-lg text-foreground min-w-[2rem] text-center">{score}</span>
-                        <span className="text-xs text-muted-foreground text-center">
+                        <span className="font-bold text-xl text-foreground min-w-[2rem] text-center">{score}</span>
+                        <span className="text-sm text-muted-foreground text-center">
                           {cocktail.upvotes}↑ {cocktail.downvotes}↓
                         </span>
 
@@ -186,7 +169,7 @@ export default function CocktailsPage() {
                           onClick={() => handleDownvote(cocktail._id)}
                           className="w-10 h-10 p-0"
                         >
-                          <ArrowDown className="w-4 h-4" />
+                          <ArrowDown className="w-5 h-5" />
                         </Button>
                       </div>
                     </div>

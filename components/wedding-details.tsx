@@ -10,7 +10,7 @@ export function WeddingDetails() {
   const isAuthenticated = currentUser !== null && currentUser !== undefined
 
   return (
-    <section id="details" className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
+    <section id="details" className="py-20 px-4 sm:px-6 lg:px-8 bg-secondary/20">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="font-serif text-4xl sm:text-5xl font-light text-foreground mb-4 text-balance">
@@ -33,7 +33,7 @@ export function WeddingDetails() {
                   <div className="flex items-start gap-3">
                     <Clock className="h-5 w-5 text-primary mt-0.5" />
                     <div>
-                      <p className="font-medium text-foreground">Please arrive by 5:00 PM</p>
+                      <p className="font-medium text-foreground">TBD</p>
                       <p>Sunday May 30, 2027</p>
                     </div>
                   </div>
@@ -66,7 +66,7 @@ export function WeddingDetails() {
                   <div className="flex items-start gap-3">
                     <Clock className="h-5 w-5 text-primary mt-0.5" />
                     <div>
-                      <p className="font-medium text-foreground">6:00 PM - 11:00 PM</p>
+                      <p className="font-medium text-foreground">TBD</p>
                       <p>Cocktails, Dinner & Dancing</p>
                     </div>
                   </div>

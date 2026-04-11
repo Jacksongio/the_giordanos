@@ -123,13 +123,16 @@ export default function SongSuggestionsPage() {
 
   return (
     <ProtectedPage title="Song Suggestions">
-      <div className="min-h-screen bg-gradient-to-b from-background to-muted">
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="mb-8">
+      <div className="min-h-screen bg-background">
+      {/* Header */}
+      <div className="bg-primary/10 border-b border-border">
+        <div className="max-w-4xl mx-auto px-4 py-8">
           <h1 className="font-serif text-4xl md:text-5xl text-foreground mb-2">Song Suggestions</h1>
           <p className="text-muted-foreground">Help us gather the best songs to suggest for the DJ!</p>
         </div>
+      </div>
+
+      <div className="max-w-4xl mx-auto px-4 py-8">
 
         {/* Add Song Button */}
         {!showSearch && (

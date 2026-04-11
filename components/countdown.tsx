@@ -36,7 +36,7 @@ export function Countdown() {
   }, [])
 
   return (
-    <section id="countdown" className="py-20 px-4 sm:px-6 lg:px-8">
+    <section id="countdown" className="py-20 px-4 sm:px-6 lg:px-8 bg-secondary/20">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-16">
           <Heart className="h-12 w-12 text-primary mx-auto mb-6" />

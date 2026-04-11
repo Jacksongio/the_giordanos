@@ -5,6 +5,7 @@ import { GeistMono } from "geist/font/mono"
 import { Playfair_Display } from "next/font/google"
 import { Suspense } from "react"
 import { Navigation } from "@/components/navigation"
+import { ScrollToTop } from "@/components/scroll-to-top"
 import { ConvexClientProvider } from "@/components/convex-provider"
 import { Toaster } from "@/components/ui/sonner"
 import "./globals.css"
@@ -29,6 +30,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`font-sans ${GeistSans.className} ${GeistMono.className} ${playfair.variable}`}>
         <ConvexClientProvider>
+          <ScrollToTop />
           <Navigation />
           <div className="pt-16">
             <Suspense fallback={null}>{children}</Suspense>

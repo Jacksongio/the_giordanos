@@ -10,7 +10,10 @@
 
 import type * as auth from "../auth.js";
 import type * as cocktails from "../cocktails.js";
+import type * as emails from "../emails.js";
 import type * as http from "../http.js";
+import type * as invites from "../invites.js";
+import type * as rsvps from "../rsvps.js";
 import type * as songs from "../songs.js";
 import type * as test from "../test.js";
 import type * as trivia from "../trivia.js";
@@ -25,7 +28,10 @@ import type {
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   cocktails: typeof cocktails;
+  emails: typeof emails;
   http: typeof http;
+  invites: typeof invites;
+  rsvps: typeof rsvps;
   songs: typeof songs;
   test: typeof test;
   trivia: typeof trivia;

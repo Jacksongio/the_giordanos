@@ -1,5 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# Windows NTFS alternate data stream markers (often created when unzipping / copying downloads)
+**/*:Zone.Identifier
+
 # dependencies
 /node_modules
 

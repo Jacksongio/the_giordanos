@@ -1,6 +1,5 @@
 import { Password } from "@convex-dev/auth/providers/Password"
 import { convexAuth } from "@convex-dev/auth/server"
-import Google from "@auth/core/providers/google"
 import Resend from "@auth/core/providers/resend"
 import { Resend as ResendAPI } from "resend"
 
@@ -9,6 +8,14 @@ const PasswordResetProvider = Resend({
   id: "password-reset",
   apiKey: process.env.AUTH_RESEND_KEY,
   from: process.env.AUTH_RESEND_FROM || "The Giordanos Wedding <onboarding@resend.dev>",
+  generateVerificationToken() {
+    const chars = "0123456789"
+    let code = ""
+    for (let i = 0; i < 6; i++) {
+      code += chars[Math.floor(Math.random() * chars.length)]
+    }
+    return code
+  },
   async sendVerificationRequest({ identifier: email, provider, token }) {
     // Log to console
     console.log("🔐 PASSWORD RESET CODE for", email)
@@ -37,26 +44,28 @@ const PasswordResetProvider = Resend({
             <html>
               <head>
                 <style>
-                  body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                  body { font-family: Georgia, 'Times New Roman', serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #faf8f5; }
                   .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                  .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
-                  .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
-                  .code { font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #667eea; text-align: center; padding: 20px; background: white; border-radius: 5px; margin: 20px 0; }
-                  .footer { text-align: center; margin-top: 20px; color: #666; font-size: 12px; }
+                  .header { background: linear-gradient(135deg, #6b7f5e 0%, #8fa87e 100%); color: white; padding: 40px 30px; text-align: center; border-radius: 10px 10px 0 0; }
+                  .header h1 { margin: 0; font-size: 28px; font-weight: 300; letter-spacing: 2px; }
+                  .content { background: white; padding: 40px 30px; border-radius: 0 0 10px 10px; text-align: center; }
+                  .subtitle { font-size: 20px; color: #6b7f5e; margin-bottom: 10px; }
+                  .message { font-size: 16px; color: #555; }
+                  .code { font-size: 24px; font-weight: bold; letter-spacing: 3px; color: #6b7f5e; text-align: center; padding: 20px; background: #f5f3ef; border-radius: 8px; margin: 25px 0; word-break: break-all; }
+                  .footer { text-align: center; margin-top: 20px; color: #999; font-size: 12px; }
                 </style>
               </head>
               <body>
                 <div class="container">
                   <div class="header">
-                    <h1>🎉 The Giordanos Wedding</h1>
+                    <h1>Jackson & Audrey</h1>
                   </div>
                   <div class="content">
-                    <h2>Reset Your Password</h2>
-                    <p>You requested to reset your password. Here's your verification code:</p>
+                    <p class="subtitle">Reset Your Password</p>
+                    <p class="message">Here's your verification code:</p>
                     <div class="code">${token}</div>
-                    <p>Enter this code on the password reset page to continue.</p>
-                    <p><strong>This code will expire in 1 hour.</strong></p>
-                    <p>If you didn't request this password reset, you can safely ignore this email.</p>
+                    <p class="message">Enter this code on the password reset page. <strong>It expires in 1 hour.</strong></p>
+                    <p style="color: #999; font-size: 14px; margin-top: 20px;">If you didn't request this, you can safely ignore this email.</p>
                   </div>
                   <div class="footer">
                     <p>This email was sent from The Giordanos Wedding website.</p>
@@ -102,7 +111,6 @@ const PasswordResetProvider = Resend({
 
 export const { auth, signIn, signOut, store } = convexAuth({
   providers: [
-    Google,
     Password({
       profile(params) {
         return {

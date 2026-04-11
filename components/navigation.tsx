@@ -6,12 +6,16 @@ import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
 import Link from "next/link"
 import { AuthButton } from "@/components/auth-button"
+import { useQuery } from "convex/react"
+import { api } from "@/convex/_generated/api"
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
+  const isAdmin = useQuery(api.users.isAdmin)
+  const isInvitePage = pathname?.startsWith("/invite")
 
   useEffect(() => {
     const handleScroll = () => {
@@ -21,9 +25,27 @@ export function Navigation() {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
+  // Handle hash scrolling when page loads with a hash
+  useEffect(() => {
+    if (pathname === "/" && window.location.hash) {
+      const hash = window.location.hash.substring(1) // Remove the #
+      setTimeout(() => {
+        const element = document.getElementById(hash)
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" })
+        }
+      }, 100)
+    }
+  }, [pathname])
+
+  // Hide navigation on invite page for immersive experience
+  if (isInvitePage) {
+    return null
+  }
+
   const scrollToSection = (id: string) => {
     setIsOpen(false)
-    
+
     // If we're on the home page, scroll to the section
     if (pathname === "/") {
       // Small delay to ensure the menu closes first
@@ -39,23 +61,10 @@ export function Navigation() {
     }
   }
 
-  // Handle hash scrolling when page loads with a hash
-  useEffect(() => {
-    if (pathname === "/" && window.location.hash) {
-      const hash = window.location.hash.substring(1) // Remove the #
-      setTimeout(() => {
-        const element = document.getElementById(hash)
-        if (element) {
-          element.scrollIntoView({ behavior: "smooth" })
-        }
-      }, 100)
-    }
-  }, [pathname])
-
   return (
     <nav
       className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        isScrolled ? "bg-background/95 backdrop-blur-sm shadow-sm" : "bg-transparent"
+        isScrolled || pathname !== "/" ? "bg-background/95 backdrop-blur-sm shadow-sm" : "bg-transparent"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -75,18 +84,9 @@ export function Navigation() {
             >
               Home
             </button>
-            <button
-              onClick={() => scrollToSection("story")}
-              className="text-foreground hover:text-primary transition-colors"
-            >
-              Our Story
-            </button>
-            <button
-              onClick={() => scrollToSection("details")}
-              className="text-foreground hover:text-primary transition-colors"
-            >
-              Details
-            </button>
+            <Link href="/guest-list" className="text-foreground hover:text-primary transition-colors">
+              Guest List
+            </Link>
             <Link href="/songs" className="text-foreground hover:text-primary transition-colors">
               Song Suggestions
             </Link>
@@ -96,6 +96,11 @@ export function Navigation() {
             <Link href="/trivia" className="text-foreground hover:text-primary transition-colors">
               Trivia
             </Link>
+            {isAdmin && (
+              <Link href="/admin" className="text-foreground hover:text-primary transition-colors">
+                Admin
+              </Link>
+            )}
             <AuthButton />
           </div>
 
@@ -118,18 +123,13 @@ export function Navigation() {
               >
                 Home
               </button>
-              <button
-                onClick={() => scrollToSection("story")}
+              <Link
+                href="/guest-list"
                 className="block px-3 py-2 text-foreground hover:text-primary transition-colors w-full text-left"
+                onClick={() => setIsOpen(false)}
               >
-                Our Story
-              </button>
-              <button
-                onClick={() => scrollToSection("details")}
-                className="block px-3 py-2 text-foreground hover:text-primary transition-colors w-full text-left"
-              >
-                Details
-              </button>
+                Guest List
+              </Link>
               <Link
                 href="/songs"
                 className="block px-3 py-2 text-foreground hover:text-primary transition-colors w-full text-left"
@@ -151,6 +151,15 @@ export function Navigation() {
               >
                 Trivia
               </Link>
+              {isAdmin && (
+                <Link
+                  href="/admin"
+                  className="block px-3 py-2 text-foreground hover:text-primary transition-colors w-full text-left"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Admin
+                </Link>
+              )}
             </div>
           </div>
         )}
