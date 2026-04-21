@@ -34,57 +34,73 @@ export const sendInviteEmail = internalAction({
         to: [args.email],
         subject: "You're Invited! - The Giordanos Wedding",
         html: `
-          <!DOCTYPE html>
-          <html>
+          <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+          <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
             <head>
-              <meta name="color-scheme" content="light" />
-              <meta name="supported-color-schemes" content="light" />
+              <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+              <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+              <!--[if mso]>
+              <noscript><xml><o:OfficeDocumentSettings><o:AllowPNG/><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript>
+              <![endif]-->
             </head>
-            <body style="font-family: Georgia, 'Times New Roman', serif; line-height: 1.6; color: #333333; margin: 0; padding: 0; background-color: #e8e4de;">
-              <div style="max-width: 580px; margin: 0 auto; padding: 40px 20px;">
+            <body style="font-family: Georgia, 'Times New Roman', serif; margin: 0; padding: 0; background-color: #e8e4de; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#e8e4de">
+                <tr>
+                  <td align="center" style="padding: 40px 20px;">
+                    <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width: 560px; width: 100%;">
 
-                <!-- Header -->
-                <div style="background-color: #4e6343; text-align: center; padding: 52px 40px 44px; border-radius: 12px 12px 0 0;">
-                  <p style="margin: 0 0 10px; font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: #a8c498;">Jackson &amp; Audrey</p>
-                  <div style="width: 40px; height: 1px; background-color: #7a9e6a; margin: 0 auto 18px;"></div>
-                  <h1 style="margin: 0 0 18px; font-size: 36px; font-weight: 300; letter-spacing: 3px; color: #ffffff; font-style: italic;">You're Invited</h1>
-                  <div style="width: 40px; height: 1px; background-color: #7a9e6a; margin: 0 auto 18px;"></div>
-                  <p style="margin: 0; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: #a8c498;">Request the pleasure of your company</p>
-                </div>
+                      <!-- Green header band -->
+                      <tr>
+                        <td bgcolor="#3d5c30" style="text-align: center; padding: 48px 40px 44px; border-radius: 12px 12px 0 0; mso-padding-alt: 48px 40px 44px 40px;">
+                          <p style="margin: 0 0 8px; font-size: 11px; letter-spacing: 5px; text-transform: uppercase; color: #a8c898;">Jackson &amp; Audrey</p>
+                          <p style="margin: 0 0 14px; font-size: 12px; color: #5a8050; letter-spacing: 4px;">&#10022; &#10022; &#10022;</p>
+                          <h1 style="margin: 0 0 14px; font-size: 38px; font-weight: 300; letter-spacing: 3px; color: #ffffff; font-style: italic; mso-line-height-rule: exactly; line-height: 46px;">You're Invited</h1>
+                          <p style="margin: 0; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: #8ab87a;">Request the pleasure of your company</p>
+                        </td>
+                      </tr>
 
-                <!-- Body -->
-                <div style="background-color: #fdfbf7; padding: 48px 48px 44px; border-radius: 0 0 12px 12px; text-align: center; border: 1px solid #d4ccc2; border-top: none;">
+                      <!-- Gold accent bar -->
+                      <tr>
+                        <td bgcolor="#c9a96e" style="height: 3px; font-size: 3px; line-height: 3px;">&nbsp;</td>
+                      </tr>
 
-                  <p style="font-size: 22px; color: #4e6343; margin: 0 0 10px; font-style: italic;">Dear ${args.name},</p>
-                  <p style="font-size: 15px; color: #777777; margin: 0 0 32px; letter-spacing: 0.5px;">We joyfully invite you to celebrate our wedding</p>
+                      <!-- Dark charcoal body -->
+                      <tr>
+                        <td bgcolor="#fdfbf7" style="padding: 48px 48px 44px; border-radius: 0 0 12px 12px; text-align: center; mso-padding-alt: 48px 48px 44px 48px;">
 
-                  <!-- Divider -->
-                  <div style="width: 60px; height: 1px; background-color: #c8bfb4; margin: 0 auto 32px;"></div>
+                          <p style="font-size: 22px; color: #4e6343; margin: 0 0 8px; font-style: italic;">Dear ${args.name},</p>
+                          <p style="font-size: 14px; color: #888888; margin: 0 0 32px; letter-spacing: 0.5px;">We joyfully invite you to celebrate our wedding</p>
 
-                  <!-- Date & Venue block -->
-                  <div style="background-color: #f4f0ea; border-radius: 10px; padding: 28px 32px; margin: 0 auto 32px; display: inline-block; width: 100%; box-sizing: border-box;">
-                    <p style="margin: 0 0 4px; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: #8a9e7a;">When</p>
-                    <p style="margin: 0 0 20px; font-size: 18px; color: #333333; font-weight: normal;">Sunday, May 30, 2027</p>
-                    <div style="width: 30px; height: 1px; background-color: #c8bfb4; margin: 0 auto 20px;"></div>
-                    <p style="margin: 0 0 4px; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: #8a9e7a;">Where</p>
-                    <p style="margin: 0 0 6px; font-size: 18px; color: #333333; font-weight: normal;">Raspberry Manor</p>
-                    <p style="margin: 0; font-size: 14px; color: #888888;">16500 Agape Ln, Leesburg, VA 20176</p>
-                  </div>
+                          <!-- Date & Venue card -->
+                          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 32px;">
+                            <tr>
+                              <td bgcolor="#f4f0ea" style="border-radius: 10px; padding: 28px 32px; text-align: center; mso-padding-alt: 28px 32px;">
+                                <p style="margin: 0 0 4px; font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: #c9a96e;">When</p>
+                                <p style="margin: 0 0 20px; font-size: 19px; color: #2e2e2e; font-weight: normal;">Sunday, May 30, 2027</p>
+                                <p style="margin: 0 0 4px; font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: #c9a96e;">Where</p>
+                                <p style="margin: 0 0 6px; font-size: 19px; color: #2e2e2e; font-weight: normal;">Raspberry Manor</p>
+                                <p style="margin: 0; font-size: 13px; color: #999999;">16500 Agape Ln, Leesburg, VA 20176</p>
+                              </td>
+                            </tr>
+                          </table>
 
-                  <!-- Divider -->
-                  <div style="width: 60px; height: 1px; background-color: #c8bfb4; margin: 0 auto 32px;"></div>
+                          <a href="${inviteUrl}" style="display: inline-block; background-color: #3d5c30; color: #ffffff; text-decoration: none; padding: 16px 48px; border-radius: 40px; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; font-family: Georgia, 'Times New Roman', serif; font-weight: bold; mso-padding-alt: 16px 48px;">Open Your Invitation &amp; RSVP</a>
+                          <p style="color: #aaaaaa; font-size: 12px; margin: 20px 0 0;">Click above to view your personalized invitation and RSVP.</p>
+                        </td>
+                      </tr>
 
-                  <a href="${inviteUrl}" style="display: inline-block; background-color: #4e6343; color: #ffffff; text-decoration: none; padding: 16px 48px; border-radius: 40px; font-size: 15px; letter-spacing: 1.5px; font-family: Georgia, 'Times New Roman', serif;">Open Your Invitation &amp; RSVP</a>
-                  <p style="color: #aaaaaa; font-size: 12px; margin: 20px 0 0; letter-spacing: 0.3px;">Click above to view your personalized invitation and RSVP.</p>
-                </div>
+                      <!-- Footer -->
+                      <tr>
+                        <td style="text-align: center; padding-top: 28px; color: #888888; font-size: 11px;">
+                          <p style="margin: 4px 0;">This email was sent from The Giordanos Wedding website.</p>
+                          <p style="margin: 4px 0;">Please do not reply to this email.</p>
+                        </td>
+                      </tr>
 
-                <!-- Footer -->
-                <div style="text-align: center; margin-top: 24px; color: #999999; font-size: 11px; letter-spacing: 0.5px;">
-                  <p style="margin: 4px 0;">This email was sent from The Giordanos Wedding website.</p>
-                  <p style="margin: 4px 0;">Please do not reply to this email.</p>
-                </div>
-
-              </div>
+                    </table>
+                  </td>
+                </tr>
+              </table>
             </body>
           </html>
         `,
