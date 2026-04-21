@@ -99,25 +99,25 @@ export default function GuestListPage() {
                       <h3 className="font-semibold text-lg truncate">
                         {guest.guestNames[0] || guest.name}
                       </h3>
-                      {guest.guestCount > 1 && guest.guestNames.length > 1 && (
-                        <p className="text-muted-foreground truncate">
-                          {guest.guestNames.slice(1).join(", ")}
-                        </p>
+                      {guest.guestNames.length > 1 && (
+                        <div className="flex flex-wrap gap-1.5 mt-1">
+                          {guest.guestNames.slice(1).map((name, i) => (
+                            <span
+                              key={i}
+                              className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full"
+                            >
+                              + {name}
+                            </span>
+                          ))}
+                        </div>
                       )}
                     </div>
 
-                    {/* Guest count badge */}
-                    {guest.guestCount > 1 ? (
-                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted px-3 py-1.5 rounded-full shrink-0">
-                        <Users className="h-3.5 w-3.5" />
-                        Party of {guest.guestCount}
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-1.5 text-xs text-primary bg-primary/10 px-3 py-1.5 rounded-full shrink-0">
-                        <UserCheck className="h-3.5 w-3.5" />
-                        Attending
-                      </div>
-                    )}
+                    {/* Attending badge */}
+                    <div className="flex items-center gap-1.5 text-xs text-primary bg-primary/10 px-3 py-1.5 rounded-full shrink-0">
+                      <UserCheck className="h-3.5 w-3.5" />
+                      {guest.guestCount > 1 ? `Party of ${guest.guestCount}` : "Attending"}
+                    </div>
                   </div>
                 </Card>
               </motion.div>

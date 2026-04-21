@@ -37,43 +37,53 @@ export const sendInviteEmail = internalAction({
           <!DOCTYPE html>
           <html>
             <head>
-              <style>
-                body { font-family: Georgia, 'Times New Roman', serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #faf8f5; }
-                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                .header { background: linear-gradient(135deg, #6b7f5e 0%, #8fa87e 100%); color: white; padding: 40px 30px; text-align: center; border-radius: 10px 10px 0 0; }
-                .header h1 { margin: 0; font-size: 28px; font-weight: 300; letter-spacing: 2px; }
-                .header p { margin: 10px 0 0; font-size: 14px; opacity: 0.9; letter-spacing: 1px; }
-                .content { background: white; padding: 40px 30px; border-radius: 0 0 10px 10px; text-align: center; }
-                .greeting { font-size: 20px; color: #6b7f5e; margin-bottom: 20px; }
-                .details { font-size: 16px; color: #555; margin: 20px 0; }
-                .details strong { color: #333; }
-                .cta-button { display: inline-block; background: linear-gradient(135deg, #6b7f5e 0%, #8fa87e 100%); color: white; text-decoration: none; padding: 16px 40px; border-radius: 30px; font-size: 16px; letter-spacing: 1px; margin: 30px 0; }
-                .footer { text-align: center; margin-top: 20px; color: #999; font-size: 12px; }
-              </style>
+              <meta name="color-scheme" content="light" />
+              <meta name="supported-color-schemes" content="light" />
             </head>
-            <body>
-              <div class="container">
-                <div class="header">
-                  <h1>Jackson & Audrey</h1>
-                  <p>REQUEST THE PLEASURE OF YOUR COMPANY</p>
+            <body style="font-family: Georgia, 'Times New Roman', serif; line-height: 1.6; color: #333333; margin: 0; padding: 0; background-color: #e8e4de;">
+              <div style="max-width: 580px; margin: 0 auto; padding: 40px 20px;">
+
+                <!-- Header -->
+                <div style="background-color: #4e6343; text-align: center; padding: 52px 40px 44px; border-radius: 12px 12px 0 0;">
+                  <p style="margin: 0 0 10px; font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: #a8c498;">Jackson &amp; Audrey</p>
+                  <div style="width: 40px; height: 1px; background-color: #7a9e6a; margin: 0 auto 18px;"></div>
+                  <h1 style="margin: 0 0 18px; font-size: 36px; font-weight: 300; letter-spacing: 3px; color: #ffffff; font-style: italic;">You're Invited</h1>
+                  <div style="width: 40px; height: 1px; background-color: #7a9e6a; margin: 0 auto 18px;"></div>
+                  <p style="margin: 0; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: #a8c498;">Request the pleasure of your company</p>
                 </div>
-                <div class="content">
-                  <p class="greeting">Dear ${args.name},</p>
-                  <p class="details">
-                    We joyfully invite you to celebrate our wedding on<br/>
-                    <strong>Sunday, May 30, 2027</strong><br/>
-                    at <strong>Raspberry Manor</strong><br/>
-                    16500 Agape Ln, Leesburg, VA 20176
-                  </p>
-                  <a href="${inviteUrl}" class="cta-button">Open Your Invitation</a>
-                  <p style="color: #999; font-size: 14px; margin-top: 20px;">
-                    Click the button above to view your personalized invitation and RSVP.
-                  </p>
+
+                <!-- Body -->
+                <div style="background-color: #fdfbf7; padding: 48px 48px 44px; border-radius: 0 0 12px 12px; text-align: center; border: 1px solid #d4ccc2; border-top: none;">
+
+                  <p style="font-size: 22px; color: #4e6343; margin: 0 0 10px; font-style: italic;">Dear ${args.name},</p>
+                  <p style="font-size: 15px; color: #777777; margin: 0 0 32px; letter-spacing: 0.5px;">We joyfully invite you to celebrate our wedding</p>
+
+                  <!-- Divider -->
+                  <div style="width: 60px; height: 1px; background-color: #c8bfb4; margin: 0 auto 32px;"></div>
+
+                  <!-- Date & Venue block -->
+                  <div style="background-color: #f4f0ea; border-radius: 10px; padding: 28px 32px; margin: 0 auto 32px; display: inline-block; width: 100%; box-sizing: border-box;">
+                    <p style="margin: 0 0 4px; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: #8a9e7a;">When</p>
+                    <p style="margin: 0 0 20px; font-size: 18px; color: #333333; font-weight: normal;">Sunday, May 30, 2027</p>
+                    <div style="width: 30px; height: 1px; background-color: #c8bfb4; margin: 0 auto 20px;"></div>
+                    <p style="margin: 0 0 4px; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: #8a9e7a;">Where</p>
+                    <p style="margin: 0 0 6px; font-size: 18px; color: #333333; font-weight: normal;">Raspberry Manor</p>
+                    <p style="margin: 0; font-size: 14px; color: #888888;">16500 Agape Ln, Leesburg, VA 20176</p>
+                  </div>
+
+                  <!-- Divider -->
+                  <div style="width: 60px; height: 1px; background-color: #c8bfb4; margin: 0 auto 32px;"></div>
+
+                  <a href="${inviteUrl}" style="display: inline-block; background-color: #4e6343; color: #ffffff; text-decoration: none; padding: 16px 48px; border-radius: 40px; font-size: 15px; letter-spacing: 1.5px; font-family: Georgia, 'Times New Roman', serif;">Open Your Invitation &amp; RSVP</a>
+                  <p style="color: #aaaaaa; font-size: 12px; margin: 20px 0 0; letter-spacing: 0.3px;">Click above to view your personalized invitation and RSVP.</p>
                 </div>
-                <div class="footer">
-                  <p>This email was sent from The Giordanos Wedding website.</p>
-                  <p>Please do not reply to this email.</p>
+
+                <!-- Footer -->
+                <div style="text-align: center; margin-top: 24px; color: #999999; font-size: 11px; letter-spacing: 0.5px;">
+                  <p style="margin: 4px 0;">This email was sent from The Giordanos Wedding website.</p>
+                  <p style="margin: 4px 0;">Please do not reply to this email.</p>
                 </div>
+
               </div>
             </body>
           </html>
@@ -157,45 +167,30 @@ export const sendAccountSetupEmail = internalAction({
           <!DOCTYPE html>
           <html>
             <head>
-              <style>
-                body { font-family: Georgia, 'Times New Roman', serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #faf8f5; }
-                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                .header { background: linear-gradient(135deg, #6b7f5e 0%, #8fa87e 100%); color: white; padding: 40px 30px; text-align: center; border-radius: 10px 10px 0 0; }
-                .header h1 { margin: 0; font-size: 28px; font-weight: 300; letter-spacing: 2px; }
-                .content { background: white; padding: 40px 30px; border-radius: 0 0 10px 10px; text-align: center; }
-                .greeting { font-size: 20px; color: #6b7f5e; margin-bottom: 20px; }
-                .message { font-size: 16px; color: #555; margin: 15px 0; }
-                .features { background: #f5f3ef; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: left; }
-                .features ul { margin: 10px 0; padding-left: 20px; }
-                .features li { margin: 8px 0; color: #555; }
-                .cta-button { display: inline-block; background: linear-gradient(135deg, #6b7f5e 0%, #8fa87e 100%); color: white; text-decoration: none; padding: 16px 40px; border-radius: 30px; font-size: 16px; letter-spacing: 1px; margin: 25px 0; }
-                .footer { text-align: center; margin-top: 20px; color: #999; font-size: 12px; }
-              </style>
+              <meta name="color-scheme" content="light" />
+              <meta name="supported-color-schemes" content="light" />
             </head>
-            <body>
-              <div class="container">
-                <div class="header">
-                  <h1>Jackson & Audrey</h1>
+            <body style="font-family: Georgia, 'Times New Roman', serif; line-height: 1.6; color: #333333; margin: 0; padding: 0; background-color: #eae6e0;">
+              <div style="max-width: 600px; margin: 0 auto; padding: 30px 20px;">
+                <div style="background-color: #5a6e4d; color: #ffffff; padding: 36px 36px; text-align: center; border-radius: 10px 10px 0 0;">
+                  <p style="margin: 0 0 6px; font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: #c8d8bc;">Jackson &amp; Audrey</p>
+                  <h1 style="margin: 0; font-size: 26px; font-weight: 300; letter-spacing: 2px; color: #ffffff;">Set Up Your Account</h1>
                 </div>
-                <div class="content">
-                  <p class="greeting">Dear ${args.name},</p>
-                  <p class="message">Thank you for your RSVP! Set up your account to access all the fun features on our wedding site:</p>
-                  <div class="features">
-                    <ul>
-                      <li>Suggest songs for the DJ playlist</li>
-                      <li>Vote on signature cocktails for the bar</li>
-                      <li>Play wedding trivia</li>
-                      <li>See the guest list</li>
-                    </ul>
+                <div style="background-color: #fffdf9; padding: 44px 36px; border-radius: 0 0 10px 10px; text-align: center; border: 1px solid #d8d0c4; border-top: none;">
+                  <p style="font-size: 21px; color: #5a6e4d; margin: 0 0 16px; font-style: italic;">Dear ${args.name},</p>
+                  <p style="font-size: 16px; color: #555555; margin: 0 0 24px;">Thank you for your RSVP! Set up your account to access all the fun features on our wedding site:</p>
+                  <div style="background-color: #f0ece5; border-radius: 8px; padding: 20px 28px; margin: 0 0 28px; text-align: left;">
+                    <p style="margin: 0 0 8px; font-size: 15px; color: #444444; padding-left: 4px;">&#127925; Suggest songs for the DJ playlist</p>
+                    <p style="margin: 0 0 8px; font-size: 15px; color: #444444; padding-left: 4px;">&#127378; Vote on signature cocktails for the bar</p>
+                    <p style="margin: 0 0 8px; font-size: 15px; color: #444444; padding-left: 4px;">&#127381; Play wedding trivia</p>
+                    <p style="margin: 0; font-size: 15px; color: #444444; padding-left: 4px;">&#128101; See the guest list</p>
                   </div>
-                  <a href="${setupUrl}" class="cta-button">Set Up Your Account</a>
-                  <p style="color: #999; font-size: 14px; margin-top: 20px;">
-                    Just choose a password and you're all set!
-                  </p>
+                  <a href="${setupUrl}" style="display: inline-block; background-color: #5a6e4d; color: #ffffff; text-decoration: none; padding: 16px 44px; border-radius: 30px; font-size: 16px; letter-spacing: 1px; margin: 0 0 20px; font-family: Georgia, 'Times New Roman', serif;">Set Up Your Account</a>
+                  <p style="color: #999999; font-size: 13px; margin: 8px 0 0;">Just choose a password and you're all set!</p>
                 </div>
-                <div class="footer">
-                  <p>This email was sent from The Giordanos Wedding website.</p>
-                  <p>Please do not reply to this email.</p>
+                <div style="text-align: center; margin-top: 20px; color: #888888; font-size: 12px;">
+                  <p style="margin: 4px 0;">This email was sent from The Giordanos Wedding website.</p>
+                  <p style="margin: 4px 0;">Please do not reply to this email.</p>
                 </div>
               </div>
             </body>
@@ -236,29 +231,30 @@ export const sendRsvpConfirmation = internalAction({
     }
 
     const attendingContent = `
-      <p class="greeting">Dear ${args.name},</p>
-      <p class="message">We're thrilled that you'll be joining us on our special day!</p>
-      <div class="summary">
-        <h3>Your RSVP Summary</h3>
-        <p><strong>Attending:</strong> Yes</p>
-        <p><strong>Number of Guests:</strong> ${args.guestCount}</p>
+      <p style="font-size: 21px; color: #5a6e4d; margin: 0 0 16px; font-style: italic;">Dear ${args.name},</p>
+      <p style="font-size: 16px; color: #555555; margin: 0 0 24px;">We're thrilled that you'll be joining us on our special day!</p>
+      <div style="background-color: #f0ece5; border-radius: 8px; padding: 20px 24px; margin: 0 0 24px; text-align: left;">
+        <p style="margin: 0 0 6px; font-size: 15px; font-weight: bold; color: #5a6e4d;">Your RSVP Summary</p>
+        <p style="margin: 4px 0; font-size: 15px; color: #444444;"><strong style="color: #333333;">Attending:</strong> Yes</p>
+        <p style="margin: 4px 0; font-size: 15px; color: #444444;"><strong style="color: #333333;">Number of Guests:</strong> ${args.guestCount}</p>
       </div>
-      <p class="details">
-        <strong>Sunday, May 30, 2027</strong><br/>
-        Raspberry Manor<br/>
-        16500 Agape Ln, Leesburg, VA 20176
-      </p>
-      <p style="color: #999; font-size: 14px;">We can't wait to celebrate with you!</p>
+      <div style="background-color: #5a6e4d; color: #ffffff; border-radius: 8px; padding: 20px 24px; margin: 0 0 24px; text-align: left;">
+        <p style="margin: 0 0 6px; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; color: #c8d8bc;">Save the Date</p>
+        <p style="margin: 0 0 4px; font-size: 16px; font-weight: bold; color: #ffffff;">Sunday, May 30, 2027</p>
+        <p style="margin: 0 0 2px; font-size: 15px; color: #c8d8bc;">Raspberry Manor</p>
+        <p style="margin: 0; font-size: 14px; color: #adc0a0;">16500 Agape Ln, Leesburg, VA 20176</p>
+      </div>
+      <p style="color: #999999; font-size: 14px; margin: 0;">We can't wait to celebrate with you!</p>
     `
 
     const declinedContent = `
-      <p class="greeting">Dear ${args.name},</p>
-      <p class="message">We're sorry you won't be able to make it, but we completely understand.</p>
-      <div class="summary">
-        <h3>Your RSVP Summary</h3>
-        <p><strong>Attending:</strong> No</p>
+      <p style="font-size: 21px; color: #5a6e4d; margin: 0 0 16px; font-style: italic;">Dear ${args.name},</p>
+      <p style="font-size: 16px; color: #555555; margin: 0 0 24px;">We're sorry you won't be able to make it, but we completely understand.</p>
+      <div style="background-color: #f0ece5; border-radius: 8px; padding: 20px 24px; margin: 0 0 24px; text-align: left;">
+        <p style="margin: 0 0 6px; font-size: 15px; font-weight: bold; color: #5a6e4d;">Your RSVP Summary</p>
+        <p style="margin: 4px 0; font-size: 15px; color: #444444;"><strong style="color: #333333;">Attending:</strong> No</p>
       </div>
-      <p style="color: #999; font-size: 14px;">We'll miss you! Thank you for letting us know.</p>
+      <p style="color: #999999; font-size: 14px; margin: 0;">We'll miss you! Thank you for letting us know.</p>
     `
 
     try {
@@ -273,32 +269,21 @@ export const sendRsvpConfirmation = internalAction({
           <!DOCTYPE html>
           <html>
             <head>
-              <style>
-                body { font-family: Georgia, 'Times New Roman', serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #faf8f5; }
-                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                .header { background: linear-gradient(135deg, #6b7f5e 0%, #8fa87e 100%); color: white; padding: 40px 30px; text-align: center; border-radius: 10px 10px 0 0; }
-                .header h1 { margin: 0; font-size: 28px; font-weight: 300; letter-spacing: 2px; }
-                .content { background: white; padding: 40px 30px; border-radius: 0 0 10px 10px; text-align: center; }
-                .greeting { font-size: 20px; color: #6b7f5e; margin-bottom: 10px; }
-                .message { font-size: 16px; color: #555; }
-                .summary { background: #f5f3ef; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: left; }
-                .summary h3 { margin: 0 0 10px; color: #6b7f5e; }
-                .summary p { margin: 5px 0; }
-                .details { font-size: 16px; color: #555; margin: 20px 0; }
-                .footer { text-align: center; margin-top: 20px; color: #999; font-size: 12px; }
-              </style>
+              <meta name="color-scheme" content="light" />
+              <meta name="supported-color-schemes" content="light" />
             </head>
-            <body>
-              <div class="container">
-                <div class="header">
-                  <h1>Jackson & Audrey</h1>
+            <body style="font-family: Georgia, 'Times New Roman', serif; line-height: 1.6; color: #333333; margin: 0; padding: 0; background-color: #eae6e0;">
+              <div style="max-width: 600px; margin: 0 auto; padding: 30px 20px;">
+                <div style="background-color: #5a6e4d; color: #ffffff; padding: 36px 36px; text-align: center; border-radius: 10px 10px 0 0;">
+                  <p style="margin: 0 0 6px; font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: #c8d8bc;">Jackson &amp; Audrey</p>
+                  <h1 style="margin: 0; font-size: 26px; font-weight: 300; letter-spacing: 2px; color: #ffffff;">${args.attending ? "We'll See You There!" : "RSVP Received"}</h1>
                 </div>
-                <div class="content">
+                <div style="background-color: #fffdf9; padding: 44px 36px; border-radius: 0 0 10px 10px; text-align: center; border: 1px solid #d8d0c4; border-top: none;">
                   ${args.attending ? attendingContent : declinedContent}
                 </div>
-                <div class="footer">
-                  <p>This email was sent from The Giordanos Wedding website.</p>
-                  <p>Please do not reply to this email.</p>
+                <div style="text-align: center; margin-top: 20px; color: #888888; font-size: 12px;">
+                  <p style="margin: 4px 0;">This email was sent from The Giordanos Wedding website.</p>
+                  <p style="margin: 4px 0;">Please do not reply to this email.</p>
                 </div>
               </div>
             </body>

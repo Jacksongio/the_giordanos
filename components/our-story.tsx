@@ -19,13 +19,10 @@ export function OurStory() {
               <div className="space-y-4">
                 <h3 className="font-serif text-2xl font-medium text-foreground">The First Date</h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  {"On a beautiful Saturday afternoon (specifically February 18th, 2023 at Virginia Tech), Jackson picked up Audrey from a local coffee shop that she worked at. Which is a story for another time\u2026."}
+                  {"On a beautiful Saturday afternoon, February 18th, 2023, Jackson picked up Audrey from the coffee shop she worked at on the Virginia Tech campus."}
                 </p>
                 <p className="text-muted-foreground leading-relaxed">
-                  {"They took a walk around Hahn Horticulture Garden on campus and sat at a bench by a small pond. The sun was in Audrey\u2019s eyes but that\u2019s okay because Jackson put his arm around her for a moment so she knew he liked her. They then walked around Duck Pond on campus. While walking, Jackson was about an arms length away from Audrey so she then thought he didn\u2019t like her."}
-                </p>
-                <p className="text-muted-foreground leading-relaxed">
-                  {"They ended up back at the coffee shop to have yet another coffee and sit and play chess. Jackson complimented Audrey saying he liked the view but then when it was time to say bye, Jackson gave Audrey a side hug. And the rest is history\u2026."}
+                  {"They walked through Hahn Horticulture Garden and sat by a small pond, then made their way around Duck Pond. At one point Jackson was an arm\u2019s length away, so naturally Audrey assumed the worst. They ended the afternoon back at the coffee shop over another cup and a game of chess, where Jackson mentioned he liked the view. And the rest is history."}
                 </p>
               </div>
             </Card>
@@ -34,16 +31,10 @@ export function OurStory() {
               <div className="space-y-4">
                 <h3 className="font-serif text-2xl font-medium text-foreground">The Proposal</h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  {"Audrey thought \u201Cis it happening? is it not happening? he went to the dry cleaners, he got a haircut, he said to get her nails done.\u201D Her anxiety was high not knowing. They went to DC (which actually was a horrible uber ride and they were almost late to dinner but Audrey had never seen Jackson so calm). They had dinner at the top of The Kennedy Center. Audrey of course did not eat her whole meal. She had anxiety (a good kind. don\u2019t worry)."}
+                  {"Audrey had her suspicions (the dry cleaners, the haircut, the nudge to get her nails done), but her anxiety was high not knowing for sure. They had dinner at the top of The Kennedy Center in DC, where Audrey predictably could not finish her meal."}
                 </p>
                 <p className="text-muted-foreground leading-relaxed">
-                  {"Audrey went to the bathroom and texted her friends to update them. They then walked up to the Lincoln Memorial and took some pictures\u2026 which never happens but Jackson was secretly texting the photographer. The Lincoln Memorial was too crowded so they walked down to the reflection pool and everyone faded away. They were holding hands. Jackson kept saying \u201CWe are going to spend the rest of our lives here.\u201D Audrey said \u201Chey look a port-a-potty.\u201D and Jackson was down on one knee."}
-                </p>
-                <p className="text-muted-foreground leading-relaxed">
-                  {"Audrey was sure she couldn\u2019t see a ring box in his jacket so she was surprised. A good kind of surprised."}
-                </p>
-                <p className="text-muted-foreground leading-relaxed">
-                  {"This was the start of a new life together for Audrey and Jackson!"}
+                  {"Afterward, they walked to the Lincoln Memorial and took pictures, which never happens. Jackson was secretly coordinating with a photographer. They made their way down to the reflection pool, and Jackson got down on one knee. Audrey was genuinely surprised. This was the start of a new life together."}
                 </p>
               </div>
             </Card>
