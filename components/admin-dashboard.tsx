@@ -105,6 +105,8 @@ function InvitesTab() {
   const deleteInviteMut = useMutation(api.invites.deleteInvite)
   const resendEmail = useMutation(api.invites.resendInviteEmail)
   const resendSms = useMutation(api.invites.resendInviteSms)
+  const adminUpdate = useMutation(api.rsvps.adminUpdateRsvp)
+  const adminDelete = useMutation(api.rsvps.adminDeleteRsvp)
 
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
@@ -117,6 +119,8 @@ function InvitesTab() {
   const [bulkCsv, setBulkCsv] = useState("")
   const [isBulkCreating, setIsBulkCreating] = useState(false)
   const [copiedToken, setCopiedToken] = useState<string | null>(null)
+  const [editingRsvpId, setEditingRsvpId] = useState<Id<"rsvps"> | null>(null)
+  const [isSavingRsvp, setIsSavingRsvp] = useState(false)
 
   const handleCreate = async () => {
     if (!name.trim() || (!email.trim() && !phone.trim())) return
@@ -198,6 +202,36 @@ function InvitesTab() {
     try {
       await resendSms({ inviteId })
       alert("SMS sent!")
+    } catch (err: any) {
+      alert(err.message)
+    }
+  }
+
+  const handleRsvpSave = async (rsvpId: Id<"rsvps">, data: any) => {
+    setIsSavingRsvp(true)
+    try {
+      await adminUpdate({
+        rsvpId,
+        name: data.name,
+        attending: data.attending,
+        guestCount: data.guestCount,
+        guestNames: data.guestNames,
+        mealChoices: data.mealChoices,
+        dietaryRestrictions: data.dietaryRestrictions || undefined,
+        message: data.message || undefined,
+      })
+      setEditingRsvpId(null)
+    } catch (err: any) {
+      alert(err.message)
+    } finally {
+      setIsSavingRsvp(false)
+    }
+  }
+
+  const handleRsvpDelete = async (rsvpId: Id<"rsvps">) => {
+    if (!confirm("Delete this RSVP? The invite will be reset so the guest can RSVP again.")) return
+    try {
+      await adminDelete({ rsvpId })
     } catch (err: any) {
       alert(err.message)
     }
@@ -363,6 +397,26 @@ function InvitesTab() {
                           <MessageSquare className="h-4 w-4" />
                         </Button>
                       )}
+                      {invite.rsvp && (
+                        <>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setEditingRsvpId(invite.rsvp!._id)}
+                            title="Edit RSVP"
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleRsvpDelete(invite.rsvp!._id)}
+                            title="Delete RSVP"
+                          >
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </>
+                      )}
                       {!invite.used && (
                         <Button
                           variant="ghost"
@@ -388,6 +442,31 @@ function InvitesTab() {
           </table>
         </div>
       </Card>
+
+      {/* Inline RSVP edit form */}
+      {editingRsvpId && (() => {
+        const invite = invites?.find((i) => i.rsvp?._id === editingRsvpId)
+        if (!invite?.rsvp) return null
+        return (
+          <div className="space-y-2">
+            <p className="text-sm font-medium text-muted-foreground">Editing RSVP for {invite.name}</p>
+            <RsvpEditForm
+              initial={{
+                name: invite.rsvp.name,
+                attending: invite.rsvp.attending,
+                guestCount: invite.rsvp.guestCount,
+                guestNames: invite.rsvp.guestNames,
+                mealChoices: invite.rsvp.mealChoices || [],
+                dietaryRestrictions: invite.rsvp.dietaryRestrictions || "",
+                message: invite.rsvp.message || "",
+              }}
+              onSave={(data) => handleRsvpSave(editingRsvpId, data)}
+              onCancel={() => setEditingRsvpId(null)}
+              isSaving={isSavingRsvp}
+            />
+          </div>
+        )
+      })()}
     </div>
   )
 }
